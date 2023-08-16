@@ -1,39 +1,53 @@
 {
-    "name" : "Alex Sample",
+    "name" : "John Iceberg Velez",
     "titles" : ["Full Stack Web Developer"],
-    "address" : "4200 Dream City, Paradise",
+    "address" : "8311 Bislig City",
     "contacts" : {
-        "website" : null,
-        "github" : null,
+        "website" : "https://icevelez.github.io/",
+        "github" : "https://github.com/icevelez/",
         "gitea" : null,
         "gitlab" : null,
-        "linkedin" : "https://www.linkedin.com/in/alex-sample",
-        "email_address" : "alex_sample@dream.city"
+        "linkedin" : "https://www.linkedin.com/in/iceberg-velez/",
+        "email_address" : "icevelezdev@gmail.com"
     },
     "employments" : [
         {
-            "organization" : "X Company (Formerly Twitter)",
-            "address" : "Malcolm St., 4200 Dream City, Paradise",
-            "position" : ["Senior Software Engineer"],
-            "start" : "Jan 2010",
-            "end" : "Present",
+            "organization" : "Government of Bislig City",
+            "address" : "8311 Bislig City, Poblacion",
+            "position" : ["Computer Programmer"],
+            "start" : "Jan 2022",
+            "end" : "Jul 2023",
             "accomplishments" : [
-                "Actively worked on research and development for improving code quality, development speed, application performance and optimizations.",
-                "Design and developed a messaging queue system using Java"
+                "Actively worked on research and development for improving code quality, development speed, web application performance and optimizations.",
+                "Introduced new technologies, concepts, and educational sources to the software team and help improve each other.",
+                "Proposed and demonstrated the use of Windows Active Directory creating an organizational unit for each department creating a centralizedidentity solution, network drive for storage, and group policies enforcing strict privileges.",
+                "Designed and developed a service oriented architecture, creating the foundation for a unified scalable, secure, and performant web systemutilizing SPAs, NGINX, Let's Encrypt, and DuckDNS.",
+                "Designed and developed a single sign-on solution to centralized authentication, authorization, and logging of RESTFul APIs using MySQL,Express, HTML/CSS/JS, and Bootstrap.",
+                "Designed and developed the Franchasing System for the City Economic Enterprise and Development Office using MySQL, Express, andHTML/CSS/JS.",
+                "Designed and deployed a continuous integration API that automates production deployment using Fasitfy and Batch scripts.",
+                "Designed and developed version 2 of the Electronic Daily Time Record web application with automated deployment using an in-house CI/CD,MongoDB, Svelte, Rollup, and MaterializeCSS.",
+                "Designed and developed version 3 of the Electronic Daily Time Record web application with automated deployment using an in-house CI/CD,MongoDB, Svelte, Vite, and Tailwind.",
+                "Worked in a team to develop and facilitate the Competition Management System for Ms.",
+                "Diwata 2022 using MongoDB, Express, Angular, andAngular Material.",
+                "Worked in a team to develop the LGU Olympics System for LGU Olympics 2023 using MongoDB, Fastify, Angular, Angular Material and Tailwind.",
+                "Developed a text messaging RESTFul API for multi-purpose use cases such as notifications and 2FA OTP using Fastify and Android ADB.",
+                "Deployed a Hyper-converged infrastructure to create, deploy, and manage virtual servers using Ubuntu Server and QEMU.",
+                "Deployed a website for application documentation and software development insight using Docusaurus.",
+                "Deployed and self hosted a Git Server to have control, privacy, and sovereignty of project source codes using Gitea."
             ]
         }
     ],
     "educations" : [
         {
-            "institution" : "University of Tetri Citi",
-            "address" : "Upper Avenue, 8811 Tetri City, Notramie",
-            "start" : "2004",
-            "end" : "2008",
-            "degree" : "Computer Engineering",
-            "accomplishments" : ["Magna Cum Laude"]
+            "institution" : "Ateneo De Davao University",
+            "address" : "Roxas Avenue, 8016 Davao City, Philippines",
+            "start" : "2018",
+            "end" : "Present",
+            "degree" : "Computer Science - Information and Technology",
+            "accomplishments" : ["CSAA Tutor 2021-2022"]
         }
     ],
-    "languages" : ["Java", "C#", "C++", "Perl", "PHP", "JavaScript", "Swift"],
-    "frameworks_and_libraries" : ["JQuery", "AngularJS", "React", "Dart"],
-    "infrastructure_and_tools" : ["NetBeans", "Android Studio", "XCode"]
+    "languages" : ["PHP", "JavaScript", "TypeScript", "SQL", "NoSQL"],
+    "frameworks_and_libraries" : ["JQuery", "Vue", "Svelte", "Angular", "Bootstrap", "Tailwind", "Express", "Fastify"],
+    "infrastructure_and_tools" : ["Windows Server", "Linux Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Playwright"]
 }
