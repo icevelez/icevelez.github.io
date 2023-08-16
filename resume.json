@@ -1,0 +1,39 @@
+{
+    "name" : "Alex Sample",
+    "titles" : ["Full Stack Web Developer"],
+    "address" : "4200 Dream City, Paradise",
+    "contacts" : {
+        "website" : null,
+        "github" : null,
+        "gitea" : null,
+        "gitlab" : null,
+        "linkedin" : "https://www.linkedin.com/in/alex-sample",
+        "email_address" : "alex_sample@dream.city"
+    },
+    "employments" : [
+        {
+            "organization" : "X Company (Formerly Twitter)",
+            "address" : "Malcolm St., 4200 Dream City, Paradise",
+            "position" : ["Senior Software Engineer"],
+            "start" : "Jan 2010",
+            "end" : "Present",
+            "accomplishments" : [
+                "Actively worked on research and development for improving code quality, development speed, application performance and optimizations.",
+                "Design and developed a messaging queue system using Java"
+            ]
+        }
+    ],
+    "educations" : [
+        {
+            "institution" : "University of Tetri Citi",
+            "address" : "Upper Avenue, 8811 Tetri City, Notramie",
+            "start" : "2004",
+            "end" : "2008",
+            "degree" : "Computer Engineering",
+            "accomplishments" : ["Magna Cum Laude"]
+        }
+    ],
+    "languages" : ["Java", "C#", "C++", "Perl", "PHP", "JavaScript", "Swift"],
+    "frameworks_and_libraries" : ["JQuery", "AngularJS", "React", "Dart"],
+    "infrastructure_and_tools" : ["NetBeans", "Android Studio", "XCode"]
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="w-full h-full" lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<title>Resume</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,0,0" />
+		<link rel="stylesheet" href="index.css" />	
+
+		<script type="module" src="index.js"></script>	
+	</head>
+	<body class="w-full h-full bg-white dark:bg-zinc-900 transition-all">
+		<div class="w-full flex justify-center">
+			<div class="w-full md:w-[80rem] text-zinc-900 dark:text-zinc-200 px-4 md:px-24 transition-all">
+				<div class="flex flex-col gap-4 md:flex-row md:justify-between pt-12 pb-6">
+					<div class="grid">
+						<h1 class="text-4xl font-bold">{{ name }}</h1>
+						<div class="mt-2">
+							<h4 class="text-sm text-zinc-500 dark:text-zinc-400" x-for="{{ titles }}" x-key="title">
+								<span>{{ title }}</span>
+								<span class="last:hidden">&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+							</h4>
+							<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ address }}</h4>
+						</div>
+					</div>
+					<div class="text-zinc-500 dark:text-zinc-400">
+						<a href="{{ contacts.website }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.website }}">
+							<span class="material-symbols-outlined text-base">language</span>
+							<span class="text-xs underline">{{ contacts.website }}</span>
+						</a>
+						<a href="{{ contacts.github }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.github }}">
+							<span class="material-symbols-outlined text-base">language</span>
+							<span class="text-xs underline">{{ contacts.github }}</span>
+						</a>
+						<a href="{{ contacts.gitlab }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.gitlab }}">
+							<span class="material-symbols-outlined text-base">language</span>
+							<span class="text-xs underline">{{ contacts.gitlab }}</span>
+						</a>
+						<a href="{{ contacts.linkedin }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.linkedin }}">
+							<span class="material-symbols-outlined text-base">language</span>
+							<span class="text-xs underline">{{ contacts.linkedin }}</span>
+						</a>
+						<a href="mailto:{{ contacts.email_address }}" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.email_address }}">
+							<span class="material-symbols-outlined text-base">email</span>
+							<span class="text-xs">{{ contacts.email_address }}</span>
+						</a>
+					</div>
+				</div>
+				<div class="grid gap-4">
+					<div>
+						<h1 class="text-md font-bold w-full border-b border-indigo-700 text-indigo-700 dark:text-indigo-400 dark:border-indigo-400">Employeement</h1>
+						<div x-for="{{ employments }}" x-key="employment">
+							<div class="flex justify-between mt-4">
+								<div>
+									<h1 class="font-bold text-lg">{{ employment.organization }}</h1>
+								</div>
+								<div class="text-end">
+									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ employment.address }}</h4>
+								</div>
+							</div>
+							<div class="flex justify-between mb-2">
+								<div>
+									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ employment.position }}</h4>
+								</div>
+								<div class="text-end">
+									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ employment.start }} - {{ employment.end }}</h4>
+								</div>
+							</div>
+							<ul class="list-disc ml-5 lg:mr-48">
+								<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300" x-for="{{ employment.accomplishments }}" x-key="accomplishment">
+									<span>{{ accomplishment }}</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div>
+						<h1 class="text-md font-bold w-full border-b border-indigo-700 text-indigo-700 dark:text-indigo-400 dark:border-indigo-400">Education</h1>
+						<div x-for="{{ educations }}" x-key="education">
+							<div class="flex justify-between mt-4">
+								<div>
+									<h1 class="font-bold text-lg">{{ education.institution }}</h1>
+									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ education.address }}</h4>
+								</div>
+								<div>
+									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ education.start }} - {{ education.end }}</h4>
+								</div>
+							</div>
+							<ul class="list-disc ml-5 md:mr-48">
+								<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300">
+									<span>{{ education.degree }}</span>
+								</li>
+								<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300" x-for="{{ education.accomplishments }}" x-key="accomplishment">
+									<span>{{ accomplishment }}</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div>
+						<h1 class="text-md font-bold w-full border-b border-indigo-700 text-indigo-700 dark:text-indigo-400 dark:border-indigo-400">Technologies</h1>
+						<ul class="list-disc ml-5 mt-2">
+							<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300">
+								<span>Languages — {{ languages.toString().replaceAll(',', ', ') }}</span>
+							</li>
+							<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300">
+								<span>Frameworks and Libraries — {{ frameworks_and_libraries.toString().replaceAll(',', ', ') }}</span>
+							</li>
+							<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300">
+								<span>Infrastructure and Tools — {{ infrastructure_and_tools.toString().replaceAll(',', ', ') }}</span>
+							</li>
+						</ul>
+					</div>	
+					<br>
+					<div class="grid justify-center items-center text-center text-xs text-zinc-700 dark:text-zinc-400">
+						<span>Copyright © 2023 {{ name }}.</span>
+						<span>All Rights Reserved.</span>
+					</div>
+					<br>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
