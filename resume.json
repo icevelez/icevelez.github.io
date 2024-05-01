@@ -21,7 +21,7 @@
             "accomplishments" : [
                 "Handling the platform UI redesign of Sermonshots alongside code improvements and fixes",
                 "Creating an API called \"webhook registry service\" for service-to-service communication using API keys",
-                "Creating an application called \"Sermon Translate\" that translate real-time audio to another language",
+                "Creating an application called \"Sermon Translate\" that translate real-time audio to a desired language output",
                 "Taking in a side project of researching and experimenting with different/new tools and technologies and report back my findings",
                 "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project"
             ]
