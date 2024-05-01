@@ -2,7 +2,7 @@ import { attachReactivity } from "./js/x-tracker.js";
 
 fetch('resume.json').then((response) => response.json()).then((data) => {
     document.title = `Resume - ${data.name}`;
-    attachReactivity(document.body, data);
+    attachReactivity(document.body, Object.assign(data, { yearNow : (new Date()).getFullYear() }));
 }).catch((error) => {
     console.error(error);
 });

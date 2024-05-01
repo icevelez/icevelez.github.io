@@ -40,6 +40,10 @@
 							<span class="material-symbols-outlined text-base">language</span>
 							<span class="text-xs underline">{{ contacts.gitlab }}</span>
 						</a>
+						<a href="{{ contacts.upwork }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.linkedin }}">
+							<span class="material-symbols-outlined text-base">language</span>
+							<span class="text-xs underline">{{ contacts.upwork }}</span>
+						</a>
 						<a href="{{ contacts.linkedin }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-700 hover:dark:text-indigo-400 transition-all" x-if="{{ contacts.linkedin }}">
 							<span class="material-symbols-outlined text-base">language</span>
 							<span class="text-xs underline">{{ contacts.linkedin }}</span>
@@ -115,7 +119,7 @@
 					</div>	
 					<br>
 					<div class="grid justify-center items-center text-center text-xs text-zinc-700 dark:text-zinc-400">
-						<span>Copyright © 2023 {{ name }}.</span>
+						<span>Copyright © {{ yearNow }} {{ name }}.</span>
 						<span>All Rights Reserved.</span>
 					</div>
 					<br>

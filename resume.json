@@ -3,17 +3,32 @@
     "titles" : ["Full Stack Web Developer"],
     "address" : "8311 Bislig City",
     "contacts" : {
-        "website" : "https://icevelez.github.io/",
         "github" : "https://github.com/icevelez/",
         "gitea" : null,
         "gitlab" : null,
+        "website" : "https://icevelez.github.io/",
+        "upwork" : "https://www.upwork.com/freelancers/~0187cb151c52b94ce8",
         "linkedin" : "https://www.linkedin.com/in/iceberg-velez/",
         "email_address" : "icevelezdev@gmail.com"
     },
     "employments" : [
         {
+            "organization" : "Brush Media Group (Sermonshots)",
+            "address" : "38555 Crossville, Tennesse, US", 
+            "position" : ["Jr. Software Engineer"],
+            "start" : "Aug 2023",
+            "end" : "Present",
+            "accomplishments" : [
+                "Handling the platform UI redesign of Sermonshots alongside code improvements and fixes",
+                "Creating an API called \"webhook registry service\" for service-to-service communication using API keys",
+                "Creating an application called \"Sermon Translate\" that translate real-time audio to another language",
+                "Taking in a side project of researching and experimenting with different/new tools and technologies and report back my findings",
+                "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project"
+            ]
+        },
+        {
             "organization" : "Government of Bislig City",
-            "address" : "8311 Bislig City, Poblacion",
+            "address" : "8311 Bislig City, Poblacion, Surigao Del Sur, PH",
             "position" : ["Computer Programmer"],
             "start" : "Jan 2022",
             "end" : "Jul 2023",
@@ -46,7 +61,7 @@
             "accomplishments" : ["CSAA Tutor 2021-2022"]
         }
     ],
-    "languages" : ["PHP", "JavaScript", "TypeScript", "SQL", "NoSQL"],
-    "frameworks_and_libraries" : ["JQuery", "Vue", "Svelte", "Angular", "Bootstrap", "Tailwind", "Express", "Fastify"],
-    "infrastructure_and_tools" : ["Windows Server", "Linux Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Playwright"]
+    "languages" : ["SQL", "PHP", "JavaScript/TypeScript", "Python", "Go"],
+    "frameworks_and_libraries" : ["JQuery", "Svelte", "Angular", "Solid.js", "Tailwind", "Express", "Fastify", "Wordpress", "Elementor"],
+    "infrastructure_and_tools" : ["Windows Server", "Ubuntu Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Node.js", "Playwright", "Docker", "Tmux", "Google Cloud Storage"]
 }
