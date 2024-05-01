@@ -562,6 +562,10 @@ video {
   width: 100%;
 }
 
+.max-w-\[72rem\] {
+  max-width: 72rem;
+}
+
 .list-disc {
   list-style-type: disc;
 }
@@ -851,10 +855,6 @@ video {
 @media (min-width: 768px) {
   .md\:mr-48 {
     margin-right: 12rem;
-  }
-
-  .md\:w-\[80rem\] {
-    width: 80rem;
   }
 
   .md\:flex-row {
