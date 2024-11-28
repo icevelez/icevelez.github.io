@@ -17,13 +17,14 @@
             "address" : "38555 Crossville, Tennesse, US", 
             "position" : ["Jr. Software Engineer"],
             "start" : "Aug 2023",
-            "end" : "Present",
+            "end" : "Nov 2024",
             "accomplishments" : [
                 "Handling the platform UI redesign of Sermonshots alongside code improvements and fixes",
                 "Creating an API called \"webhook registry service\" for service-to-service communication using API keys",
                 "Creating an application called \"Sermon Translate\" that translate real-time audio to a desired language output",
                 "Taking in a side project of researching and experimenting with different/new tools and technologies and report back my findings",
-                "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project"
+                "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project",
+                "Creating a psuedo data-structure using JSON to genralize rendering of videos using HTML/JS/CSS with Remotion by creating basic elements such as for images, videos, and subtitle"
             ]
         },
         {
@@ -60,7 +61,7 @@
             "accomplishments" : ["CSAA Tutor 2021-2022"]
         }
     ],
-    "languages" : ["SQL", "PHP", "JavaScript/TypeScript", "Python", "Go"],
-    "frameworks_and_libraries" : ["JQuery", "Svelte", "Angular", "Solid.js", "Tailwind", "Express", "Fastify", "Wordpress", "Elementor"],
-    "infrastructure_and_tools" : ["Windows Server", "Ubuntu Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Node.js", "Playwright", "Docker", "Tmux", "Google Cloud Storage"]
+    "languages" : ["SQL", "PHP", "JavaScript", "TypeScript", "Python", "Go"],
+    "frameworks_and_libraries" : ["JQuery", "Svelte", "Angular", "Solid.js", "React", "Tailwind", "Express", "Fastify", "Fast API", "Wordpress", "Elementor"],
+    "infrastructure_and_tools" : ["Windows Server", "Ubuntu Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Node.js", "Playwright", "Docker", "Tmux", "Google Cloud Storage", "AWS Lambda"]
 }
