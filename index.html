@@ -19,12 +19,14 @@
 				<div class="flex flex-wrap gap-4 justify-between pt-12 pb-6">
 					<div class="grid">
 						<h1 class="text-4xl font-bold">{{ name }}</h1>
-						<div class="mt-2">
+						<div class="mt-2 flex">
 							<h4 class="text-sm text-zinc-500 dark:text-zinc-400" x-for="{{ titles }}" x-key="title">
 								<span>{{ title }}</span>
-								<span class="last:hidden">&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+								<span class="">&nbsp;·&nbsp;</span>
 							</h4>
-							<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ address }}</h4>
+						</div>
+						<div>
+							<h4 class="text-sm text-zinc-500 dark:text-zinc-500">{{ address }}</h4>
 						</div>
 					</div>
 					<div class="text-zinc-500 dark:text-zinc-400">
@@ -93,7 +95,7 @@
 									<h4 class="text-sm text-zinc-500 dark:text-zinc-400">{{ education.start }} - {{ education.end }}</h4>
 								</div>
 							</div>
-							<ul class="list-disc ml-5 md:mr-48">
+							<ul class="list-disc mt-2 ml-5 md:mr-48">
 								<li class="py-2 text-sm text-zinc-800 dark:text-zinc-300">
 									<span>{{ education.degree }}</span>
 								</li>

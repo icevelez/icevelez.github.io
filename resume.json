@@ -1,7 +1,7 @@
 {
     "name" : "John Iceberg Velez",
-    "titles" : ["Full Stack Web Developer"],
-    "address" : "8311 Bislig City",
+    "titles" : ["Web Developer", "Junior Software Engineer"],
+    "address" : "8311, Bislig City, PH",
     "contacts" : {
         "github" : "https://github.com/icevelez/",
         "gitea" : null,
@@ -13,18 +13,18 @@
     },
     "employments" : [
         {
-            "organization" : "Brush Media Group (Sermonshots)",
+            "organization" : "Brush Media Group (SermonShots)",
             "address" : "38555 Crossville, Tennesse, US", 
             "position" : ["Jr. Software Engineer"],
             "start" : "Aug 2023",
             "end" : "Nov 2024",
             "accomplishments" : [
-                "Handling the platform UI redesign of Sermonshots alongside code improvements and fixes",
+                "Handling the platform UI redesign of SermonShots alongside code improvements and fixes",
                 "Creating an API called \"webhook registry service\" for service-to-service communication using API keys",
                 "Creating an application called \"Sermon Translate\" that translate real-time audio to a desired language output",
                 "Taking in a side project of researching and experimenting with different/new tools and technologies and report back my findings",
                 "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project",
-                "Creating a psuedo data-structure using JSON to genralize rendering of videos using HTML/JS/CSS with Remotion by creating basic elements such as for images, videos, and subtitle"
+                "Creating a psuedo data-structure using JSON to genralize rendering of videos with Remotion by creating basic components such as images, videos, and subtitle elements"
             ]
         },
         {
@@ -62,6 +62,6 @@
         }
     ],
     "languages" : ["SQL", "PHP", "JavaScript", "TypeScript", "Python", "Go"],
-    "frameworks_and_libraries" : ["JQuery", "Svelte", "Angular", "Solid.js", "React", "Tailwind", "Express", "Fastify", "Fast API", "Wordpress", "Elementor"],
-    "infrastructure_and_tools" : ["Windows Server", "Ubuntu Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Apache", "Node.js", "Playwright", "Docker", "Tmux", "Google Cloud Storage", "AWS Lambda"]
+    "frameworks_and_libraries" : ["JQuery", "Svelte", "Angular", "Nest.js", "Solid.js", "React", "Tailwind", "Express", "Fastify", "Fast API", "Wordpress", "Elementor"],
+    "infrastructure_and_tools" : ["Windows & Ubuntu Server", "MySQL", "PostgreSQL", "MongoDB", "Redis", "NGINX", "Node.js", "TypeORM", "Playwright", "Docker", "Tmux", "Google Cloud Storage", "AWS Lambda"]
 }
