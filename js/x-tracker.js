@@ -237,15 +237,16 @@ export function attachReactivity(template, variables) {
 
                 if (!array) return;
 
-                array.reverse().forEach((item) => {
+                array.reverse().forEach((item, i) => {
                     
                     const clonedChildren = children.map((child) => child.cloneNode(true));
 
                     const div = document.createElement('div');
                     div.append(...clonedChildren);
 
-                    const data = {};
+                    const data = { ...variables };
                     data[key] = item;
+                    data.i = (array.length - 1) - i;
 
                     attachReactivity(div, data);
 
@@ -274,12 +275,13 @@ export function attachReactivity(template, variables) {
 
             if (!array) return;
             
-            array.reverse().forEach((item) => {
+            array.reverse().forEach((item, i) => {
                 
                 const template = element.cloneNode(true);
 
-                const data = {};
+                const data = { ...variables };
                 data[key] = item;
+                data.i = (array.length - 1) - i;
 
                 attachReactivity(template, data);
                 insertAfter(template, anchorNode);

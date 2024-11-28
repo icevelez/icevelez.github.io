@@ -766,6 +766,10 @@ video {
   transition-duration: 150ms;
 }
 
+.hidden {
+  display: none;
+}
+
 .last\:hidden:last-child {
   display: none;
 }
