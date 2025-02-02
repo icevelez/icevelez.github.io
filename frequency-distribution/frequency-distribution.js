@@ -1,7 +1,8 @@
-function checkWidth(range, interval) {
-	const width = Math.round(range / interval);
-	if (width % 2 === 0) return checkInterval(range, interval+1);
-	return width;
+function checkWidth(range, k) {
+	const width = Math.round(range / k);
+	console.log("check width:", { rounded_width : width, range, k, rawWidth : range / k });
+	if (width % 2 === 0) return checkInterval(range, k+1);
+	return { width, rawWidth : range / k };
 }
 
 /**
@@ -22,11 +23,12 @@ function calculateFrequencyDistribution(input) {
 	}
 	
 	// CALCULATE CLASS RANGE, MARK, WIDTH (and K using Sturge’s Rule)
-	// reference: https://themanufacturingacademy.com/sturges-rule-a-method-for-selecting-the-number-of-bins-in-a-histogram/ 
+	// references: https://themanufacturingacademy.com/sturges-rule-a-method-for-selecting-the-number-of-bins-in-a-histogram/ 
+	// 			   https://www.statology.org/how-to-find-class-interval/
 	const range = highest_value - lowest_value;
 	const mark = range / 2;
-	const k = Math.round(1 + 3.322 * Math.log(input_length));
-	const width = checkWidth(range, k);
+	const k = Math.round(1 + 3.322 * Math.log(input_length)); // k = number of classes, https://www.shorttutorials.com/how-to-find-number-of-classes-in-statistics/index.html
+	const { width, rawWidth } = checkWidth(range, k);
 
 	// CALCULATE LOWER/UPPER LIMIT RANGE AND BOUNDARY
 	const lower_limit_range = [];
@@ -36,6 +38,10 @@ function calculateFrequencyDistribution(input) {
 	while (n < highest_value) {
 		lower_limit_range.push(n);
 		n += width;
+		if (n > highest_value) {
+			upper_limit_range.push(highest_value);
+			break;
+		}
 		upper_limit_range.push(n - 1);
 	}
 	
@@ -63,7 +69,7 @@ function calculateFrequencyDistribution(input) {
 	}
 
 	// CALCULATE CLASS INTERVAL
-	const interval = upper_limit_range[0] - lower_limit_range[0];
+	const intervals = upper_limit_range.map((ulr, i) => ulr - lower_limit_range[i]);
 
 	// CALCULATE LOWER/UPPER CUMULATIVE FREQUENCY
 	const lower_cumulative_frequency = [];
@@ -115,7 +121,7 @@ function calculateFrequencyDistribution(input) {
 		highest_value,
 		lowest_value,
 		range,
-		interval,
+		intervals,
 		width,
 		lower_limit_range,
 		upper_limit_range,
@@ -131,19 +137,25 @@ function calculateFrequencyDistribution(input) {
 	})
 
 	const html_dataset = document.getElementById("dataset");
+	const html_dataset_length = document.getElementById("dataset_length");
+	const html_range = document.getElementById("range");
+	const html_k = document.getElementById("k");
 	const html_class_width = document.getElementById("width");
 	const html_table = document.getElementById("table_body");
 	let html_rows = "";
 
 	html_dataset.innerHTML = `Input Data: ${JSON.stringify(input)}`;
-	html_class_width.innerHTML = `Class Width: ${width}`;
+	html_dataset_length.innerHTML = `Input Data Length: ${input.length}`;
+	html_range.innerHTML = `Range: ${range}`;
+	html_k.innerHTML = `k: ${k} = Math.round(1 + 3.322 * Math.log(${input_length}))`;
+	html_class_width.innerHTML = `Class Width: ${rawWidth} rounded off to ${width}`;
 	
 	for (let i = 0; i < frequency.length; i++) {
 		html_rows += `
 			<tr>
 				<td>${lower_limit_range[i]}-${upper_limit_range[i]}</td>
 				<td>${lower_boundary[i]}-${upper_boundary[i]}</td>
-				<td>${interval}</td>
+				<td>${intervals[i]}</td>
 				<td>${midpoint[i]}</td>
 				<td>${frequency[i]}</td>
 				<td>${lower_cumulative_frequency[i]}</td>
@@ -177,6 +189,8 @@ function main() {
 			return isNaN(number) ? null : number;
 		}).filter((x) => x !== null))
 	})
+
+	html_calculate_button.click();
 }
 
 main();
