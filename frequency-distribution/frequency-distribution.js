@@ -1,7 +1,7 @@
 function checkWidth(range, k) {
 	const width = Math.round(range / k);
 	console.log("check width:", { rounded_width : width, range, k, rawWidth : range / k });
-	if (width % 2 === 0) return checkInterval(range, k+1);
+	if (width % 2 === 0) return checkWidth(range, k+1);
 	return { width, rawWidth : range / k };
 }
 
