@@ -190,7 +190,7 @@ function main() {
 			return isNaN(number) ? null : number;
 		}).filter((x) => x !== null))
 		} catch (error) {
-                   console.log(error.toString());
+                   alert(error.toString());
 		}
 	})
 
