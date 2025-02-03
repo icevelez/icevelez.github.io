@@ -184,10 +184,14 @@ function main() {
 	html_input.value = input.join(",");
 
 	html_calculate_button.addEventListener('click', (event) => {
+		try {
 		calculateFrequencyDistribution(html_input.value.split(",").map((x) => {
 			const number = parseInt(x);
 			return isNaN(number) ? null : number;
 		}).filter((x) => x !== null))
+		} catch (error) {
+                   console.log(error.toString());
+		}
 	})
 
 	html_calculate_button.click();
