@@ -24,8 +24,9 @@
                 "Creating an application called \"Sermon Translate\" that translate real-time audio to a desired language output",
                 "Taking in a side project of researching and experimenting with different/new tools and technologies and report back my findings",
                 "Building my character by taking ownership and initiative of a given project and communicating to the team of any updates and/or blockers to the project",
-                "Creating a psuedo data-structure using JSON to genralize rendering of videos with Remotion by creating basic components such as images, videos, and subtitle elements then scaling them using AWS Lambda",
-                "Creating and integrating an internal Python FAST API to generate a written recap of a video input using AI"
+                "Creating a JSON file-format to genralize rendering of user-created videos using Remotion",
+                "Developing a UI for vieweing, selecting, and modifiying of subtitles in the SermonShot webapp",
+                "Creating and integrating an internal FAST API to generate a written recap of a video input using OpenAI and AnthropicAI"
             ]
         },
         {
