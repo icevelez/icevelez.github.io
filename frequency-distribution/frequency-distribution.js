@@ -27,7 +27,7 @@ function calculateFrequencyDistribution(input) {
 	// 			   https://www.statology.org/how-to-find-class-interval/
 	const range = highest_value - lowest_value;
 	const mark = range / 2;
-	const k = Math.round(1 + 3.322 * (Math.log(input_length) / Math.log(10))); // k = number of classes, https://www.shorttutorials.com/how-to-find-number-of-classes-in-statistics/index.html
+	const k = Math.round(1 + 3.322 * (Math.log10(input_length))); // k = number of classes, https://www.shorttutorials.com/how-to-find-number-of-classes-in-statistics/index.html
 	const { width, rawWidth } = checkWidth(range, k);
 
 	// CALCULATE LOWER/UPPER LIMIT RANGE AND BOUNDARY
