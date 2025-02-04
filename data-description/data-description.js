@@ -13,7 +13,7 @@ function sum(dataset) {
  * @returns {number}
  */
 function mean(dataset) {
-    return sum(dataset) / dataset.length;
+    return parseFloat((sum(dataset) / dataset.length).toFixed(2));
 }
 
 /**
@@ -23,7 +23,7 @@ function mean(dataset) {
  * @param {number[]} weights 
  */
 function weightedMean(values, weights) {
-    return values.reduce((total_value, current_value, i) => total_value + (current_value * weights[i]), 0) / sum(weights);
+    return parseFloat((values.reduce((total_value, current_value, i) => total_value + (current_value * weights[i]), 0) / sum(weights)).toFixed(2));
 }
 
 /**
@@ -37,7 +37,7 @@ function weightedMean(values, weights) {
 function meanUngroupedfrequenciesDistribution(dataset, frequencies_dataset) {
     const sum_fx = dataset.map((value, i) => (frequencies_dataset[i] || 0) * value);
     const sum_f = sum(dataset);
-    return  sum_fx / sum_f;
+    return parseFloat((sum_fx / sum_f).toFixed(2));
 }
 
 /**
@@ -52,7 +52,7 @@ function meanGroupedfrequenciesDistribution(frequencies, midpoint_dataset) {
     const frequencies_x_midpoint = frequencies.map((value, i) => (midpoint_dataset[i] || 0) * value);
     const sum_fxm = sum(frequencies_x_midpoint);
     const sum_f = sum(frequencies);
-    return sum_fxm / sum_f;
+    return parseFloat((sum_fxm / sum_f).toFixed(2));
 }
 
 /**
@@ -178,11 +178,11 @@ function populationStandardDeviation(population) {
     const x_u = population.map((x) => (x - u));
     const x_u_sqrd = x_u.map((i) => i*i);
     const o2 = sum(x_u_sqrd.map((i) => i / size));
-    const sqrt_o2 = Math.sqrt(o2);
+    const o = Math.sqrt(o2);
 
-    console.log({ x_u, x_u_sqrd, u, size, o2, sqrt_o2 });
+    console.log({ x_u, x_u_sqrd, u, size, o2, o });
 
-    return sqrt_o2;
+    return parseFloat(o.toFixed(2));
 }
 
 /**
@@ -192,7 +192,7 @@ function populationStandardDeviation(population) {
  * @param {number[]} samples 
  * @returns {number}
  */
-function sampleStandardDeviation(samples) {
+function sampleVariance(samples) {
     const x_mean = mean(samples);
     const n = samples.length;
     const x_x_mean = samples.map((x) => Math.pow(x - x_mean, 2))
@@ -207,12 +207,51 @@ function sampleStandardDeviation(samples) {
 
     console.log({x_mean, n, x_x_mean, sum_x_x_mean, s, sum_x, sum_x2, s_alternative });
 
-    return s;
+    return parseFloat(s.toFixed(2));
+}
+
+/**
+ * Reference: https://daigler20.addu.edu.ph/pluginfile.php/975914/mod_resource/content/1/bman03.pdf
+ * Page 3-64
+ * 
+ * For grouped data the second argument is class midpoints, for ungrouped data use actual values 
+ * 
+ * @param {number[]} frequencies 
+ * @param {number[]} values_or_midpoints 
+ * @returns 
+ */
+function sampleVarianceGroupedData(frequencies, values_or_midpoints) {
+
+    const n = sum(frequencies);
+    const sum_fxm = sum(frequencies.map((f, i) => f * values_or_midpoints[i]));
+    const sum_fxm2 = sum(frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)));
+    const s = Math.sqrt((sum_fxm2 - (Math.pow(sum_fxm, 2) / n)) / (n - 1));
+
+    return parseFloat(s.toFixed(2))
+}
+
+/**
+ * Reference: https://daigler20.addu.edu.ph/pluginfile.php/975914/mod_resource/content/1/bman03.pdf
+ * Page 3-67
+ * 
+ * @param {number[]} frequencies 
+ * @param {number[]} values_or_midpoints 
+ * @returns 
+ */
+function coefficientOfVariance(frequencies, values_or_midpoints) {
+
+    const n = sum(frequencies);
+    const sum_fxm = sum(frequencies.map((f, i) => f * values_or_midpoints[i]));
+    const sum_fxm2 = sum(frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)));
+    const s = Math.sqrt((sum_fxm2 - (Math.pow(sum_fxm, 2) / n)) / (n - 1));
+
+    return parseFloat((s / mean(values_or_midpoints)).toFixed(2))
 }
 
 function main() {
     console.log(populationStandardDeviation([10,60,50,30,40,20]));
-    console.log(sampleStandardDeviation([16,19,15,15,14]))
+    console.log(sampleVariance([16,19,15,15,14]))
+    console.log(sampleVarianceGroupedData([2,3,8,1,6,4], [5,6,7,8,9,10]))
 }
 
 main();
