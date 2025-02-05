@@ -38,10 +38,7 @@ function calculateFrequencyDistribution(input) {
 	while (n < highest_value) {
 		lower_limit_range.push(n);
 		n += width;
-		if (n > highest_value) {
-			upper_limit_range.push(highest_value);
-			break;
-		}
+		
 		upper_limit_range.push(n);
 		n++;
 	}
