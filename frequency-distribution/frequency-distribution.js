@@ -42,7 +42,8 @@ function calculateFrequencyDistribution(input) {
 			upper_limit_range.push(highest_value);
 			break;
 		}
-		upper_limit_range.push(n - 1);
+		upper_limit_range.push(n);
+		n++;
 	}
 	
 	const lower_boundary = lower_limit_range.map((n) => n - 0.5);
