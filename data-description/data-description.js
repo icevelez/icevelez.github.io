@@ -319,6 +319,7 @@ function main() {
             frequencies : [4,3,4,10,9,7,5,8]
         }
     ]
+
     const html_tables = document.getElementById("tables");
     html_tables.innerHTML = "";
 
@@ -326,19 +327,6 @@ function main() {
         const frq_table = frq_tables[i];
         const class_mark = calculateClassMark(frq_table.class_boundaires);
         const dataDescription = calculateDataDescriptionBasedOnFDT(frq_table.class_boundaires, frq_table.frequencies);
-
-        let html_table_body = "";
-
-        for (let j = 0; j < frq_table.class_boundaires.length; j++) {
-            html_table_body += `
-                <tr>
-                    <td>${frq_table.class_boundaires[j].lower}-${frq_table.class_boundaires[j].upper}</td>
-                    <td>${class_mark[j]}</td>
-                    <td>${frq_table.frequencies[j] || 0}</td>
-                </tr>
-            `
-        }
-
         html_tables.innerHTML += `
             <table>
                 <thead>
@@ -349,7 +337,21 @@ function main() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${html_table_body}
+                    ${(() => {
+                        let html_table_body = "";
+
+                        for (let j = 0; j < frq_table.class_boundaires.length; j++) {
+                            html_table_body += `
+                                <tr>
+                                    <td>${frq_table.class_boundaires[j].lower}-${frq_table.class_boundaires[j].upper}</td>
+                                    <td>${class_mark[j]}</td>
+                                    <td>${frq_table.frequencies[j] || 0}</td>
+                                </tr>
+                            `
+                        }
+
+                        return html_table_body;
+                    })()}
                 </tbody>
                 <tfoot>
                     <tr>
