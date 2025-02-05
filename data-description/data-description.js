@@ -1,4 +1,28 @@
 /**
+ * 
+ * @param {number[]} frequencies 
+ * @returns {number[]}
+ */
+function calculateCumulativeFrequency(frequencies) {
+    const cf = [];
+	for (let i = 0; i < frequencies.length; i++) {
+		let lcf = 0;
+		for (let y = 0; y <= i; y++) lcf += frequencies[y] || 0;	
+		cf[i] = parseFloat(lcf.toFixed(2));
+	}
+    return cf;
+}
+
+/**
+ * 
+ * @param {{ lower : number, upper : number }[]} class_boundaires 
+ * @returns {number[]}
+ */
+function calculateClassMark(class_boundaires) {
+    return class_boundaires.map((cb) => Math.round((cb.upper + cb.lower) / 2)); 
+}
+
+/**
  * @param {number[]} dataset 
  * @returns {number}
  */
@@ -35,8 +59,8 @@ function weightedMean(values, weights) {
  * @returns {number}
  */
 function meanUngroupedfrequenciesDistribution(dataset, frequencies_dataset) {
-    const sum_fx = dataset.map((value, i) => (frequencies_dataset[i] || 0) * value);
-    const sum_f = sum(dataset);
+    const sum_fx = dataset.map((value, i) => (frequencies_dataset[i] || 0) * value); // f * X
+    const sum_f = sum(dataset); // n
     return parseFloat((sum_fx / sum_f).toFixed(2));
 }
 
@@ -50,8 +74,8 @@ function meanUngroupedfrequenciesDistribution(dataset, frequencies_dataset) {
  */
 function meanGroupedfrequenciesDistribution(frequencies, midpoint_dataset) {
     const frequencies_x_midpoint = frequencies.map((value, i) => (midpoint_dataset[i] || 0) * value);
-    const sum_fxm = sum(frequencies_x_midpoint);
-    const sum_f = sum(frequencies);
+    const sum_fxm = sum(frequencies_x_midpoint); // f * Xm
+    const sum_f = sum(frequencies); // n
     return parseFloat((sum_fxm / sum_f).toFixed(2));
 }
 
@@ -69,18 +93,17 @@ function median(dataset) {
  * Reference: https://daigler20.addu.edu.ph/pluginfile.php/975914/mod_resource/content/1/bman03.pdf
  * Page 3-32
  * 
- * This assumes that both `frequencies` and `cumulative_frequencies` have the same length
  * @param {number[]} frequencies 
- * @param {number[]} cumulative_frequencies 
  */
-function medianUngroupedfrequenciesDistrubtion(frequencies, cumulative_frequencies) {
+function medianUngroupedfrequenciesDistrubtion(frequencies) {
 
     let class_median = -1;
     
     const median_frequencies = median(frequencies);
-    
+    const cf = calculateCumulativeFrequency(frequencies);
+
     for (let i = 0; i < frequencies.length; i++) {
-        if (median_frequencies >= frequencies[i] && median_frequencies <= cumulative_frequencies[i]) {
+        if (median_frequencies >= frequencies[i] && median_frequencies <= cf[i]) {
             class_median = i;
             break;
         }
@@ -93,18 +116,19 @@ function medianUngroupedfrequenciesDistrubtion(frequencies, cumulative_frequenci
  * Reference: https://daigler20.addu.edu.ph/pluginfile.php/975914/mod_resource/content/1/bman03.pdf
  * Page 3-37
  * 
+ * Cumulative frequency is automatically calculated
+ * 
  * @param {{ lower : number, upper : number }[]} class_boundaires
  * @param {number[]} frequencies 
- * @param {number[]} cumulative_frequencies 
  */
-function medianGroupedfrequenciesDistribution(class_boundaires, frequencies, cumulative_frequencies) {
+function medianGroupedfrequenciesDistribution(class_boundaires, frequencies) {
     const n = sum(frequencies);
-    const i = medianUngroupedfrequenciesDistrubtion(frequencies, cumulative_frequencies);
-    const cf = cumulative_frequencies[i];
+    const cf = calculateCumulativeFrequency(frequencies);
+    const i = medianUngroupedfrequenciesDistrubtion(frequencies);
     const f = frequencies[i];
     const width = class_boundaires[i].upper - class_boundaires[i].lower;
     const l = class_boundaires[i].lower;
-    const md = (((n / 2) - cf) / f) * width + l;
+    const md = (((n / 2) - cf[i]) / f) * width + l;
     return parseFloat(md.toFixed(2));
 }
 
@@ -157,12 +181,12 @@ function modeGroupedFrequencyDistribution(class_boundaires, frequencies) {
 	for (let i = 0; i < frequencies.length; i++) {
 		const frequency = frequencies[i];
 		if (!highest_frequency || highest_frequency < frequency) {
-            highest_frequency = item;
+            highest_frequency = frequency;
             highest_frequency_index = i;
         }
 	}
 
-    return class_boundaires[highest_frequency_index];
+    return { class_number : highest_frequency_index+1, class_boundary : class_boundaires[highest_frequency_index], frequency : highest_frequency };
 }
 
 /**
@@ -220,14 +244,18 @@ function sampleVariance(samples) {
  * @param {number[]} values_or_midpoints 
  * @returns 
  */
-function sampleVarianceGroupedData(frequencies, values_or_midpoints) {
+function sampleVarianceGroupedUngroupedData(frequencies, values_or_midpoints) {
 
     const n = sum(frequencies);
     const sum_fxm = sum(frequencies.map((f, i) => f * values_or_midpoints[i]));
     const sum_fxm2 = sum(frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)));
-    const s = Math.sqrt((sum_fxm2 - (Math.pow(sum_fxm, 2) / n)) / (n - 1));
+    const sample_variance = (sum_fxm2 - (Math.pow(sum_fxm, 2) / n)) / (n - 1)
+    const standard_deviation = parseFloat(Math.sqrt(sample_variance).toFixed(2));
+    const coefficient_of_variance = parseFloat((sample_variance / mean(values_or_midpoints)).toFixed(2))
+    
+    // console.log({ n, sum_fxm, sum_fxm2, fxm : frequencies.map((f, i) => f * values_or_midpoints[i]), fxm2 : frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)) });
 
-    return parseFloat(s.toFixed(2))
+    return { sample_variance : parseFloat(sample_variance.toFixed(2)), standard_deviation, coefficient_of_variance };
 }
 
 /**
@@ -248,10 +276,104 @@ function coefficientOfVariance(frequencies, values_or_midpoints) {
     return parseFloat((s / mean(values_or_midpoints)).toFixed(2))
 }
 
+/**
+ * 
+ * @param {{ lower : number, upper : number}[]} class_boundaires 
+ * @param {number[]} frequencies 
+ */
+function calculateDataDescriptionBasedOnFDT(class_boundaires, frequencies) {  
+    const class_mark = calculateClassMark(class_boundaires);
+    const mean = meanGroupedfrequenciesDistribution(frequencies, class_mark);
+    const median = medianGroupedfrequenciesDistribution(class_boundaires, frequencies);
+    const mode = modeGroupedFrequencyDistribution(class_boundaires, frequencies);
+    const { sample_variance, standard_deviation, coefficient_of_variance } = sampleVarianceGroupedUngroupedData(frequencies, class_mark);
+    return { mean, median, mode, sample_variance, standard_deviation, coefficient_of_variance };
+}
+
 function main() {
-    console.log(populationStandardDeviation([10,60,50,30,40,20]));
-    console.log(sampleVariance([16,19,15,15,14]))
-    console.log(sampleVarianceGroupedData([2,3,8,1,6,4], [5,6,7,8,9,10]))
+
+    const frq_tables = [
+        {
+            class_boundaires : [
+                { lower : 41.5, upper : 48.5 },
+                { lower : 48.5, upper : 55.5 },
+                { lower : 55.5, upper : 62.5 },
+                { lower : 62.5, upper : 69.5 },
+                { lower : 69.5, upper : 76.5 },
+                { lower : 76.5, upper : 83.5 },
+                { lower : 83.5, upper : 90.5 },
+            ],
+            frequencies : [8,8,13,7,6,5,3]
+        },
+        {
+            class_boundaires : [
+                { lower : 50.5, upper : 55.5 },
+                { lower : 55.5, upper : 60.5 },
+                { lower : 60.5, upper : 65.5 },
+                { lower : 65.5, upper : 70.5 },
+                { lower : 70.5, upper : 75.5 },
+                { lower : 75.5, upper : 80.5 },
+                { lower : 80.5, upper : 85.5 },
+                { lower : 85.5, upper : 90.5 },
+            ],
+            frequencies : [4,3,4,10,9,7,5,8]
+        }
+    ]
+    const html_tables = document.getElementById("tables");
+    html_tables.innerHTML = "";
+
+    for (let i = 0; i < frq_tables.length; i++) {
+        const frq_table = frq_tables[i];
+        const class_mark = calculateClassMark(frq_table.class_boundaires);
+        const dataDescription = calculateDataDescriptionBasedOnFDT(frq_table.class_boundaires, frq_table.frequencies);
+
+        let html_table_body = "";
+
+        for (let j = 0; j < frq_table.class_boundaires.length; j++) {
+            html_table_body += `
+                <tr>
+                    <td>${frq_table.class_boundaires[j].lower}-${frq_table.class_boundaires[j].upper}</td>
+                    <td>${class_mark[j]}</td>
+                    <td>${frq_table.frequencies[j] || 0}</td>
+                </tr>
+            `
+        }
+
+        html_tables.innerHTML += `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class Boundary</th>
+                        <th>Class Midpoint</th>
+                        <th>Frequency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${html_table_body}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Mean: ${dataDescription.mean}</td>
+                    </tr>
+                    <tr>
+                        <td>Median: ${dataDescription.median}</td>
+                    </tr>
+                    <tr>
+                        <td>Mode: Class #${dataDescription.mode.class_number}</td>
+                    </tr>
+                    <tr>
+                        <td>Sample variance: ${dataDescription.sample_variance}</td>
+                    </tr>
+                    <tr>
+                        <td>Standard Deviation: ${dataDescription.standard_deviation}</td>
+                    </tr>
+                    <tr>
+                        <td>Coeffecient of Variation: ${dataDescription.coefficient_of_variance}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        `
+    }
 }
 
 main();
