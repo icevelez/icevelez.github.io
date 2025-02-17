@@ -1,3 +1,15 @@
+const consoleLogElement = document.getElementById("consolelog");
+
+/**
+ * 
+ * @param  {...any} args 
+ */
+function log(...args) {
+    const p = document.createElement("p");
+    p.innerHTML = JSON.stringify(args);
+    consoleLogElement.append(p);
+}
+
 /**
  * 
  * @param {number[]} frequencies 
@@ -206,9 +218,25 @@ function populationStandardDeviation(population) {
     const o2 = sum(x_u_sqrd.map((i) => i / size));
     const o = Math.sqrt(o2);
 
-    console.log({ x_u, x_u_sqrd, u, size, o2, o });
+    log({ x_u, x_u_sqrd, u, size, o2, o });
 
     return parseFloat(o.toFixed(2));
+}
+
+/**
+ * Reference: https://daigler20.addu.edu.ph/pluginfile.php/975914/mod_resource/content/1/bman03.pdf
+ * Page 3-58
+ * 
+ * @param {number[]} samples 
+ * @returns {number}
+ */
+function populationVariance(samples) {
+    const x_mean = mean(samples);
+    const n = samples.length;
+    const x_x_mean = samples.map((x) => Math.pow(x - x_mean, 2))
+    const sum_x_x_mean = sum(x_x_mean);
+    const s = Math.sqrt(sum_x_x_mean / n);
+    return parseFloat(s.toFixed(2));
 }
 
 /**
@@ -277,6 +305,8 @@ function coefficientOfVariance(frequencies, values_or_midpoints) {
 
     return parseFloat((s / mean(values_or_midpoints)).toFixed(2))
 }
+
+// =================================================================================== //
 
 /**
  * 
