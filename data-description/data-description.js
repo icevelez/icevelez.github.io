@@ -139,10 +139,10 @@ function medianGroupedfrequenciesDistribution(class_boundaires, frequencies) {
     const cf = calculateCumulativeFrequency(frequencies);
     const i = medianUngroupedfrequenciesDistrubtion(frequencies);
     const f = frequencies[i];
-    const width = class_boundaires[i].upper - class_boundaires[i].lower;
-    const l = class_boundaires[i].lower;
-    const md = (((n / 2) - cf[i]) / f) * width + l;
-	log({ n, cf, i, cfi : cf[i], f, width, l, md }, `(((${n} / 2) - ${cf[i]}) / ${f}) * ${width} + ${l}`);
+    const width = class_boundaires[i-1].upper - class_boundaires[i-1].lower;
+    const l = class_boundaires[i-1].lower;
+    const md = (((n / 2) - cf[i-1]) / f) * width + l;
+	log({ n, cf, i, cfi : cf[i-1], f, width, l, md }, `(((${n} / 2) - ${cf[i]}) / ${f}) * ${width} + ${l}`);
     return parseFloat(md.toFixed(2));
 }
 
