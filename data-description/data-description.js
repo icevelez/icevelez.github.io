@@ -6,7 +6,7 @@ const consoleLogElement = document.getElementById("consolelog");
  */
 function log(...args) {
     const p = document.createElement("p");
-    p.innerHTML = JSON.stringify(args);
+    p.innerHTML = JSON.stringify(JSON.stringify(args));
     consoleLogElement.append(p);
 }
 
@@ -259,7 +259,7 @@ function sampleVariance(samples) {
     const sum_x2 = sum(samples.map((x) => x*x));
     const s_alternative = Math.sqrt((sum_x2 - (Math.pow(sum_x, 2) / n)) / (n - 1));
 
-    console.log({x_mean, n, x_x_mean, sum_x_x_mean, s, sum_x, sum_x2, s_alternative });
+    log({x_mean, n, x_x_mean, sum_x_x_mean, s, sum_x, sum_x2, s_alternative });
 
     return parseFloat(s.toFixed(2));
 }
@@ -283,7 +283,7 @@ function sampleVarianceGroupedUngroupedData(frequencies, values_or_midpoints) {
     const standard_deviation = parseFloat(Math.sqrt(sample_variance).toFixed(2));
     const coefficient_of_variance = parseFloat((sample_variance / mean(values_or_midpoints)).toFixed(2))
     
-    // console.log({ n, sum_fxm, sum_fxm2, fxm : frequencies.map((f, i) => f * values_or_midpoints[i]), fxm2 : frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)) });
+    log({ n, sum_fxm, sum_fxm2, fxm : frequencies.map((f, i) => f * values_or_midpoints[i]), fxm2 : frequencies.map((f, i) => f * Math.pow(values_or_midpoints[i], 2)) });
 
     return { sample_variance : parseFloat(sample_variance.toFixed(2)), standard_deviation, coefficient_of_variance };
 }
