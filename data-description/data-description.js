@@ -142,7 +142,7 @@ function medianGroupedfrequenciesDistribution(class_boundaires, frequencies) {
     const width = class_boundaires[i].upper - class_boundaires[i].lower;
     const l = class_boundaires[i].lower;
     const md = (((n / 2) - cf[i]) / f) * width + l;
-	log({ n, cf, i, cfi : cf[i], f, width, l, md });
+	log({ n, cf, i, cfi : cf[i], f, width, l, md }, `(((${n} / 2) - ${cf[i]}) / ${f}) * ${width} + ${l}`);
     return parseFloat(md.toFixed(2));
 }
 
