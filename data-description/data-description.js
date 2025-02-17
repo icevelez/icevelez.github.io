@@ -18,7 +18,7 @@ function log(...args) {
 function calculateCumulativeFrequency(frequencies) {
     const cf = [];
 	for (let i = 0; i < frequencies.length; i++) {
-		let lcf = frequencies[i];
+		let lcf = i == 0 ? frequencies[i] : 0;
 		for (let y = 0; y < i; y++) lcf += frequencies[y] || 0;	
 		cf[i] = parseFloat(lcf.toFixed(2));
 	}
