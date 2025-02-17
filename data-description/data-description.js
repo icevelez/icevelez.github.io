@@ -96,7 +96,7 @@ function meanGroupedfrequenciesDistribution(frequencies, midpoint_dataset) {
  * @param {number[]} dataset 
  */
 function median(dataset) {
-    dataset = structuredClone(dataset.sort((a, b) => a - b));
+    dataset = structuredClone(dataset).sort((a, b) => a - b);
     const middle_point = Math.round(dataset.length / 2);
     if (dataset.length % 2 === 0) return (dataset[middle_point] + dataset[middle_point+1]) / 2;
     return dataset[middle_point];
