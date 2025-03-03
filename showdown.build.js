@@ -7,7 +7,7 @@ fetch("index.md").then((response) => response.text()).then((data) => {
     }
 
     try {
-        contentElement.innerHTML = converter.makeHtml(document.body)
+        contentElement.innerHTML = converter.makeHtml(data)
     } catch (error) {
         alert("something went wrong converting markdown to html")
         console.error(error);
