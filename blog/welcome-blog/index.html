@@ -4,15 +4,51 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Welcome Blog | Iceberg Velez</title>
-        <script src="/showdown.min.js"></script>
-        <script src="/showdown.build.js"></script>
+        <script src="/marked.min.js"></script>
+        <script src="/marked.build.js"></script>
+        <link rel="stylesheet" href="/style.css"/>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     </head>
     <body>
-        <div>
-            <h1>Nav</h1>
-        </div>
-        <div id="content">
+        <header>
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/">Iceberg Velez</a>
+                </div>
+                <ul class="menu">
+                    <li>
+                        <a href="/about">About</a>
+                    </li>
+                    <li>
+                        <a href="/blog">Blog</a>
+                    </li>
+                    <li>
+                        <a href="/resume">Resume</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div>
+                <div class="blog-header">
+                    <div class="breadcrumbs">
+                        <a href="/">Home</a>&nbsp;»&nbsp;
+                        <a href="/blog/">Blog</a>
+                    </div>
+                    <h1 class="title">Welcome Blog</h1>
+                    <div class="description">My first blog</div>
+                    <span title="2025-01-04 11:18:32 +0100 +0100">Jan 4</span>
+                </div>
+                <hr>
+                <div id="content">
 
-        </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div class="footer">
+                Copyright © 2025, Iceberg Velez; all rights reserved.
+            </div>
+        </footer>
     </body>
 </html>
