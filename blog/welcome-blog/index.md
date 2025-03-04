@@ -4,7 +4,7 @@
 
 This is my first blog. I don't know how blogs work or how to make so I'm just typing out what's on my mind
 
-I was inspired to make this by [Emil Privér's](https://priver.dev/) website which had this simple yet elegant look. It is powered by Hugo, a Framework that compiles markdown files as HTML using Go but I'd like to go on a different route
+I was inspired to make this when I saw [Emil Privér's](https://priver.dev/) website which had this simple yet elegant look. It is powered by Hugo, a Framework that compiles markdown files as HTML using Go but I'd like to go on a different route
 
 My set out goal was to create blog post client-side (browser) which means no build step therefore I can not use most SSG Frameworks and to achieve that my first idea was to convert a markdown (.md) file to HTML and inject it to the DOM which led me to search for JS markdown-to-html library like [Marked](https://github.com/markedjs/marked)
 
