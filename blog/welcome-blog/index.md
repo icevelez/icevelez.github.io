@@ -1,4 +1,4 @@
-![Happy Dog](./assets/happy-dog-dog.webp)
+![Happy Dog](./assets/happy-dog.webp)
 
 # Hello viewer
 
