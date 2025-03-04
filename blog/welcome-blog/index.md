@@ -6,9 +6,11 @@ This is my first blog. I don't know how blogs work or how to make so I'm just ty
 
 I was inspired to make this by [Emil Privér's](https://priver.dev/) website which had this simple yet elegant look. It is powered by Hugo, a Framework that compiles markdown files as HTML using Go but I'd like to go on a different route
 
-My goal was to create blog pages client-side (browser) which means no build step ergo no Frameworks which will quite a challenge and to overcome that challenge my first idea is to convert markdown (.md) to HTML and inject it to the DOM which led me to [Marked](https://github.com/markedjs/marked)
+My set out goal was to create blog post client-side (browser) which means no build step therefore I can not use most SSG Frameworks and to achieve that my first idea was to convert a markdown (.md) file to HTML and inject it to the DOM which led me to search for JS markdown-to-html library like [Marked](https://github.com/markedjs/marked)
 
-directory structure
+So the process would be to use `fetch` to download `index.md`, parse it as a text then use `marked.min.js` to convert it to HTML then insert it to `id="content"` and repeat that for every blog site that will come next
+
+folder structure
 
 ```
 ├── index.html
@@ -25,9 +27,7 @@ directory structure
         └── index.md
 ```
 
-The idea is to use `fetch` to download `index.md`, parse it as a text then use `marked.min.js` to convert it to HTML then insert it to `id="content"` and repeat that for every blog site that will come next
-
-
+marked.build.js
 ```
 fetch("index.md").then((response) => response.text()).then((data) => {
     const contentElement = document.getElementById("content");
@@ -53,5 +53,4 @@ fetch("index.md").then((response) => response.text()).then((data) => {
 })
 ```
 
-I don't have the hassle of a build process but that also means I have to do things more manually like adding in a new blog entry in `/blog/index.html` and the caveat that `marked.js` brings (like no syntax highlight for code blocks) but to me it's an okay compromise to meet the goal of "no build step"
-
+This way I don't have the hassle of a build process but that also means I have to do things more manually like adding in a new blog entry in `/blog/index.html` every time I create a new blog, manually adding in HTML metadata for search engine and social messaging platform like `Discord` could properly parse my blogpost; There is also the caveat that `marked.js` brings like no syntax highlight for code blocks by default but overall it's an okay compromise as a start, things will change but how they'll change, time will tell 
