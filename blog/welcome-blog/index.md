@@ -53,4 +53,4 @@ fetch("index.md").then((response) => response.text()).then((data) => {
 })
 ```
 
-This way I don't have the hassle of a build process but that also means I have to do things more manually like adding in a new blog entry in `/blog/index.html` every time I create a new blog, manually adding in HTML metadata for search engine and social messaging platform like `Discord` could properly parse my blogpost; There is also the caveat that `marked.js` brings like no syntax highlight for code blocks by default but overall it's an okay compromise as a start, things will change but how they'll change, time will tell 
+This way I don't have the hassle of a build process but that also means I have to do things more manually like adding in a new blog entry in `/blog/index.html` every time I create a new blog, manually adding in HTML metadata for search engine and social messaging platform like `Discord` could properly parse my blogpost; There is also the caveat that `marked.js` brings like no syntax highlight for code blocks by default but overall it's an okay compromise as a start, things will change but how they'll change, time will tell

@@ -13,48 +13,51 @@
 
         <script src="/marked.min.js"></script>
         <script src="/marked.build.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script> -->
+
         <link rel="stylesheet" href="/style.css"/>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> -->
     </head>
     <body>
-        <header>
-            <nav class="nav">
-                <div class="logo">
-                    <a href="/">Iceberg Velez</a>
+        <header class="w-full flex justify-center px-4">
+            <nav class="h-[4rem] w-full max-w-[calc(900px-2rem)] flex justify-between">
+                <div class="p-0.5 h-full flex items-center text-xl font-bold">
+                    <a href="/" class="hover:text-fuchsia-700">Iceberg Velez</a>
                 </div>
-                <ul class="menu">
+                <ul class="p-0.5 h-full flex items-center gap-4">
                     <li>
-                        <a href="/about">About</a>
+                        <a href="/about" class="hover:text-fuchsia-700">About</a>
                     </li>
                     <li>
-                        <a href="/blog">Blog</a>
+                        <a href="/blog" class="hover:text-fuchsia-700">Blog</a>
                     </li>
                     <li>
-                        <a href="/resume">Resume</a>
+                        <a href="/resume" class="hover:text-fuchsia-700">Resume</a>
                     </li>
                 </ul>
             </nav>
         </header>
-        <main>
-            <div>
-                <div class="blog-header">
-                    <div class="breadcrumbs">
-                        <a href="/">Home</a>&nbsp;»&nbsp;
-                        <a href="/blog/">Blog</a>
+        <main class="w-full flex justify-center px-4">
+            <div class="w-full max-w-[calc(900px-2rem)]">
+                <div class="py-2">
+                    <div class="text-xl font-bold">
+                        <a href="/" class="hover:text-fuchsia-700">Home</a>&nbsp;»&nbsp;
+                        <a href="/blog/" class="hover:text-fuchsia-700">Blog</a>
                     </div>
-                    <h1 class="title">Welcome Blog</h1>
-                    <div class="description">My first blog</div>
-                    <span title="2025-01-04 11:18:32 +0100 +0100">Jan 4</span>
+                    <h1 class="text-3xl pt-4 font-bold">Welcome Blog</h1>
+                    <div class="text-md pt-1">My first blog</div>
+                    <span class="text-sm font-medium" title="2025-01-04 11:18:32 +0100 +0100">Jan 4</span>
                 </div>
-                <hr>
-                <div id="content">
+                <hr class="w-full text-zinc-300">
+                <div id="content" class="reset-tw nm">
 
                 </div>
             </div>
         </main>
-        <footer>
-            <div class="footer">
-                Copyright © 2025, Iceberg Velez; all rights reserved.
+        <footer class="h-[4rem] w-full flex justify-center py-2 px-4">
+            <div class="w-full max-w-[calc(900px-2rem)]">
+                <hr class="w-full text-zinc-300">
+                <p class="py-2">Copyright © 2025, Iceberg Velez; all rights reserved.</p>
             </div>
         </footer>
     </body>
