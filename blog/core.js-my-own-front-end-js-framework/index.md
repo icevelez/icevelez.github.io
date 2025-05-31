@@ -34,7 +34,7 @@ It boils down to two main factors why I made this framework
 
 Now I understand there are many benefits of having a build step discussed by [Evan You in his 2017 talk at ReactiveConf](https://www.youtube.com/watch?v=7iy8XQ7TSnc) like removing the performance overhead in the browser by processing the template at compile-time (AOT) instead of run-time (JIT), hoisting static DOM element to be re-used when diffing the vdom, removing unused code via tree-shaking, and code optimization by partial evaluation.
 
-But given my goal. It is a trade-off that I have to live with.
+I even went and ported over the [Svelte JS Bencmark source code](https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/svelte/src) to Core.js and compared it against Svelte and Angular which Core.js performed slower than both (especially the "create 10k entries")
 
 # Project Link
 
