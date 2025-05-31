@@ -12,6 +12,10 @@
     all: revert !important;
 }
 
+.reset-tw pre {
+    overflow-x: auto !important;
+}
+
 :root {
     --max-width: 900px;
     --nav-height: 64px;
@@ -64,6 +68,8 @@ body {
         --text-lg--line-height: calc(1.75 / 1.125);
         --text-xl: 1.25rem;
         --text-xl--line-height: calc(1.75 / 1.25);
+        --text-2xl: 1.5rem;
+        --text-2xl--line-height: calc(2 / 1.5);
         --text-3xl: 1.875rem;
         --text-3xl--line-height: calc(2.25 / 1.875);
         --text-4xl: 2.25rem;
@@ -378,6 +384,11 @@ body {
 
     .pt-8 {
         padding-top: calc(var(--spacing) * 8);
+    }
+
+    .text-2xl {
+        font-size: var(--text-2xl);
+        line-height: var(--tw-leading, var(--text-2xl--line-height));
     }
 
     .text-3xl {
