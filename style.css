@@ -42,6 +42,11 @@ body {
     border-radius: 1rem !important;
 }
 
+.nm video {
+    width: 100% !important;
+    border-radius: 1rem !important;
+}
+
 #content pre {
     padding: 0.5rem !important;
     border-radius: 0.5rem !important;

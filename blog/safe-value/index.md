@@ -18,6 +18,6 @@ In the template we use `{{#await}}` to wait for the network call to finish and w
 
 By using `ValidType` in combination with `SafeValue` I'm making sure that the data the server responds with is the data that I'm expecting and with declarative code using `Signals` it makes rendering UIs a lot simpler and easier
 
-<video style="width: 100% !important;" controls>
+<video controls>
   <source src="./assets/demo.webm" type="video/webm">
 </video>
