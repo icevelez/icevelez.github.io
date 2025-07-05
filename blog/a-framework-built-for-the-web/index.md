@@ -18,7 +18,7 @@ Applying similar optimizations as a compiler at runtime.
 
 > "Is that enough?"
 
-Yes? It performs relatively fast and is faster than React 19 at creating and updating 10,000 rows, swapping rows, and deleting one row out of 10,000 using the `js-framework-benchmark` it's uncompressed bundle size is large ~64.1KB but gzipped compressed it goes down to ~13.6kB
+Yes? It performs relatively fast at creating and updating 10,000 rows, swapping rows, and deleting one row out of 10,000 using the `js-framework-benchmark` it's uncompressed bundle size is large ~64.1KB but gzipped compressed it goes down to ~13.6kB
 
 ![Performance](./assets/performance.webp)
 
