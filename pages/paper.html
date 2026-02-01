@@ -53,13 +53,17 @@
         </div>
         <audio id="audio-el" src="paper/Lany - Made In Hollywood.mp3"/>
         <script>
+            function delay(time) {
+                return new Promise((resolve) => setTimeout(resolve, time));
+            }
+
             const audio_el = document.getElementById("audio-el");
             const yes_input = document.getElementById("yes-ipt");
             const no_input = document.getElementById("no-ipt");
             const confetti_el = document.getElementById("confetti-el");
             const message_box_el = document.getElementById("message-box-el");
 
-            yes_input.addEventListener('click', () => {
+            yes_input.addEventListener('click', async () => {
                 confetti_el.setAttribute("style", "background-image: url('paper/confetti.gif'); background-size: cover;");
                 message_box_el.innerHTML = `
                     <h1 class="text-7xl w-full text-center">I LOVE YOU</h1>
@@ -75,11 +79,14 @@
 
                 audio_el.play();
 
-                setTimeout(() => {
-                    const parent = message_box_el.parentElement;
-                    parent.innerHTML = "";
-                    parent.setAttribute("style", "background-image: url('paper/after.jpg'); background-size: cover;");
-                }, 4000)
+                const parent = message_box_el.parentElement;
+
+                await delay(5000)
+                parent.innerHTML = "";
+                parent.setAttribute("style", "background-image: url('paper/after.jpg'); background-size: cover;");
+                await delay(5000)
+                parent.innerHTML = "";
+                parent.setAttribute("style", "background-image: url('paper/night.jpg'); background-size: cover;");
             })
 
             no_input.addEventListener('click', () => {
