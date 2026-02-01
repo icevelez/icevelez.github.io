@@ -36,7 +36,7 @@
     <body class="dancing-script relative">
         <div id="confetti-el" class="absolute top-0 left-0 h-full w-full flex items-center justify-center pointer-events-none">
         </div>
-        <div class="w-full h-full flex items-center justify-center" style="background-image: url('secret/background.jpg'); background-size: cover;">
+        <div class="w-full h-full flex items-center justify-center" style="background-image: url('paper/background.jpg'); background-size: cover;">
             <div id="message-box-el" class="bg-white rounded-lg w-[680px] h-[540px] shadow-md p-10 flex flex-col justify-center transition-all">
                 <h1 class="text-7xl w-full text-center">Will you be my Valentine?</h1>
                 <div class="flex justify-around gap-10 text-5xl h-full items-center">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <audio id="audio-el" src="secret/Lany - Made In Hollywood.mp3"/>
+        <audio id="audio-el" src="paper/Lany - Made In Hollywood.mp3"/>
         <script>
             const audio_el = document.getElementById("audio-el");
             const yes_input = document.getElementById("yes-ipt");
@@ -60,7 +60,7 @@
             const message_box_el = document.getElementById("message-box-el");
 
             yes_input.addEventListener('click', () => {
-                confetti_el.setAttribute("style", "background-image: url('secret/confetti.gif'); background-size: cover;");
+                confetti_el.setAttribute("style", "background-image: url('paper/confetti.gif'); background-size: cover;");
                 message_box_el.innerHTML = `
                     <h1 class="text-7xl w-full text-center">I LOVE YOU</h1>
                     <br>
@@ -78,7 +78,7 @@
                 setTimeout(() => {
                     const parent = message_box_el.parentElement;
                     parent.innerHTML = "";
-                    parent.setAttribute("style", "background-image: url('secret/after.jpg'); background-size: cover;");
+                    parent.setAttribute("style", "background-image: url('paper/after.jpg'); background-size: cover;");
                 }, 4000)
             })
 
