@@ -54,11 +54,14 @@ At the time, I didn’t fully understand:
 
 Parts of the code were deeply nested and callback-heavy. Today I’d structure it differently.
 
-But the app worked. It served real users. It was maintainable.
+But the app worked. It served real users. It was readable. 
 
 I was using native `import` and `export` simply because splitting code into files felt natural. I had no idea this capability was the result of years of struggle with AMD, CommonJS, and bundlers trying to simulate a module system that didn’t yet exist.
 
 I was standing on top of platform progress I didn’t even know had happened.
+
+**Figure 1:** A sketch of what I plan the Restaurant System was going to be back in 2022, emphasizing breaking down each domain as its own component, its own JS file to be imported
+![code_by_component](./assets/code_by_component.jpg)
 
 ---
 
