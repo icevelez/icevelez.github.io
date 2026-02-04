@@ -1,3 +1,5 @@
+![Cover](./assets/cover.webp)
+
 I didn’t come to this conclusion from nostalgia or minimalism.
 I came to it by accident.
 
