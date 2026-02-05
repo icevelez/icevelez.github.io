@@ -50,7 +50,7 @@ I was using native `import` and `export` simply because splitting code into file
 
 I was standing on top of platform progress I didn’t even know had happened.
 
-Here is a sketch that I made in 2022 unaware I was describing ESM modules
+Here is a sketch that I made in 2022 unaware that this kind of project architecture splitting files by module was impossible 7 years ago
 ![code_by_component](./assets/code_by_component.jpg)
 
 ---
