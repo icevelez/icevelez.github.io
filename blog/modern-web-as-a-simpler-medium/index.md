@@ -46,21 +46,11 @@ There were no reactive primitives. When state changed, I re-rendered explicitly.
 
 ## I Didn’t Know the History — But I Benefited From It
 
-At the time, I didn’t fully understand:
-
-* The event loop
-* The microtask queue
-* `async` / `await`
-
-Parts of the code were deeply nested and callback-heavy. Today I’d structure it differently.
-
-But the app worked. It served real users. It was readable. 
-
-I was using native `import` and `export` simply because splitting code into files felt natural. I had no idea this capability was the result of years of struggle with AMD, CommonJS, and bundlers trying to simulate a module system that didn’t yet exist.
+I was using native `import` and `export` simply because splitting code into files felt natural. I had no idea this capability was the result of years of struggle with Asynchronous Module Definition (AMD), CommonJS, and bundlers trying to simulate a module system that didn’t yet exist.
 
 I was standing on top of platform progress I didn’t even know had happened.
 
-**Figure 1:** A sketch of what I plan the Restaurant System was going to be back in 2022, emphasizing breaking down each domain as its own component, its own JS file to be imported
+Here is a sketch that I made in 2022 unaware I awas using ESM modules, breaking down each domain, each route as its own isolated part, its own JS file
 ![code_by_component](./assets/code_by_component.jpg)
 
 ---
@@ -107,16 +97,18 @@ But the platform evolved.
 | Many HTTP requests are slow | Bundle everything                       | HTTP/2 & HTTP/3 multiplexing                    |
 | No module system            | AMD / CommonJS / Bundlers               | Native ES Modules                               |
 | No lazy loading             | Code splitting                          | `import()`                                      |
-| CSS collisions & structure  | SASS, PostCSS, scoped CSS in frameworks | `@layer`, CSS variables, `:where()`, Shadow DOM |
+| CSS collisions & structure  | SASS, PostCSS, scoped CSS in frameworks | `@scope`, `@layer`, CSS variables, `:where()` |
 | Large payloads              | Extreme minification                    | Brotli + better caching                         |
 
 The web platform absorbed many of the responsibilities our build tools once handled.
 
-But our habits didn’t update.
+Years after building that government system, I watched [David Heinemeier Hansson argue in a 2024 Rails Conf openning keynote](https://www.youtube.com/watch?v=-cEn_83zRFw) that we should reconsider the modern obsession with build pipelines — that maybe the web had grown strong enough to run more directly again.
+
+That idea hit me hard. Because I had already lived it — accidentally.
 
 ---
 
-## Bundlers are Brilliant, but Are They Still Necessary??
+## Bundlers Are Brilliant — But Are They Still Necessary?
 
 Bundlers are engineering marvels. But it’s worth asking: are they still solving a fundamental limitation, or optimizing around outdated assumptions?
 
@@ -156,7 +148,7 @@ Tree shaking works best in ideal scenarios like
 import { formatDate } from './utils.js'
 ```
 
-But real-world code is not always ideal. Tools promise perfect dead code elimination, but JavaScript’s dynamic nature makes that guarantee fragile.
+Especially in large teams, where convenience often wins over theoretical optimization. Tools promise perfect dead code elimination, but JavaScript’s dynamic nature makes that guarantee fragile.
 
 We built tools that assume perfect static structure, then fed them messy, human-written programs.
 
@@ -227,20 +219,27 @@ It’s:
 
 **“What level of complexity can this team realistically understand and maintain over time?”**
 
-All software has complexity. The choice is whether that complexity lives in a massive toolchain you inherit — or in a smaller system you deeply understand.
+Every software project carries complexity. The real decision is where that complexity lives — inside a large, inherited toolchain, or inside a smaller system you understand deeply.
 
-In my case, leaning on the browser itself reduced the number of moving parts. Fewer transformations. Fewer hidden layers. More of the system was visible in “View Source.”
+In my case, I was a solo developer building the Ordering System. There was no team to distribute knowledge across, so I leaned on the browser’s native Web APIs to reduce moving parts. Fewer transformations. Fewer hidden layers. More of the system remained visible in View Source.
 
-And that visibility has value.
+That visibility turned out to be practical, not just philosophical. I was able to add a POS receipt printing feature directly in production, while the system was live and in use, on the same machine running the server — without needing a rebuild, a deployment pipeline, or hot module reloading.
+
+Less indirection meant faster understanding. And faster understanding meant faster, safer changes.
+
+All of this leads to a harder question — not about technical possibility, but about the operational and cognitive cost of the solutions we choose.
 
 ---
 
 ## The Web Is Becoming Simple Again
 
-We are slowly returning to a model where the browser itself is powerful enough to be the primary runtime — not just the final target of a long chain of transformations.
+I didn’t set out to prove anything about the future of the web.
+I was just trying to ship something useful with tools I made and understood.
 
-And when you experience that shift firsthand — when you build something real, used by real people, with just HTML, CSS, and JavaScript — you start to see the web less as a fragile platform that needs layers of protection…
+But looking back, that constraint forced me closer to the platform itself — and farther from the layers we’ve added on top of it.
 
-…and more as a capable medium that’s grown up.
+And maybe that’s where the web is quietly heading again:
+
+Not toward more abstraction — but toward a platform that’s finally powerful enough to stand on its own.
 
 The modern web is becoming **mature enough to be simple**.
