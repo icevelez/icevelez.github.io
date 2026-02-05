@@ -50,7 +50,7 @@ I was using native `import` and `export` simply because splitting code into file
 
 I was standing on top of platform progress I didn’t even know had happened.
 
-Here is a sketch that I made in 2022 unaware I awas using ESM modules, breaking down each domain, each route as its own isolated part, its own JS file
+Here is a sketch that I made in 2022 unaware I was describing ESM modules
 ![code_by_component](./assets/code_by_component.jpg)
 
 ---
@@ -102,10 +102,6 @@ But the platform evolved.
 
 The web platform absorbed many of the responsibilities our build tools once handled.
 
-Years after building that government system, I watched [David Heinemeier Hansson argue in a 2024 Rails Conf openning keynote](https://www.youtube.com/watch?v=-cEn_83zRFw) that we should reconsider the modern obsession with build pipelines — that maybe the web had grown strong enough to run more directly again.
-
-That idea hit me hard. Because I had already lived it — accidentally.
-
 ---
 
 ## Bundlers Are Brilliant — But Are They Still Necessary?
@@ -128,7 +124,7 @@ When we split into chunks, each file is minified in isolation. Cross-chunk compr
 
 In other words, code splitting — done to improve loading — can reduce the theoretical efficiency of minification.
 
-The loss isn’t catastrophic, but it’s ironic: we add build complexity for optimizations that sometimes counteract each other.
+The loss isn’t catastrophic, but it’s ironic: we add build complexity for optimizations that counteract each other.
 
 ### Tree Shaking Isn’t a Silver Bullet
 
@@ -183,7 +179,7 @@ Modern frontend tooling often promises leaner, faster applications through minif
 
 **More tooling does not automatically mean a smaller or simpler result.**
 
-In a recent restaurant Ordering System I built using my own lightweight framework (Core.js), I relied on:
+In a recent restaurant Ordering System I built using my own lightweight framework ([Core.js](https://github.com/icevelez/core.js)), I relied on:
 
 * Native ES modules
 * Dynamic `import()` for lazy loading
@@ -196,7 +192,7 @@ No minification.
 
 No tree-shaking step.
 
-The login page with just the application code — shipped at **19.7 KB**.
+The login page with just the total application code — shipped at **19.7 KB** — **13.9 KB of that was framework code**
 
 For comparison:
 
