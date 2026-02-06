@@ -237,8 +237,6 @@ Even [David Heinemeier Hansson](https://dhh.dk/) talked about Rails returning to
 
 The web didn’t get simpler because we removed features. It got simpler because the platform matured enough to carry more weight on its own.
 
-Faster builds are nice but sometimes the real breakthrough is realizing you don’t need a build at all. We don’t always need more layers, more tooling, or longer pipelines to ship software. Sometimes progress means reclaiming what the platform can already do — and trusting it again.
-
-Not toward more abstraction — but toward a platform that’s finally powerful enough to stand on its own.
+Faster builds are nice but sometimes the real breakthrough is realizing you don’t need a build at all. We don’t always need more layers, more tooling, or longer pipelines to ship software. Sometimes progress means reclaiming what the platform can already do
 
 The modern web is becoming **mature enough to be simple.**
