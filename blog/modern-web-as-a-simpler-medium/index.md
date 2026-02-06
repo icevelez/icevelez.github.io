@@ -229,13 +229,16 @@ All of this leads to a harder question — not about technical possibility, but 
 
 ## The Web Is Becoming Simple Again
 
-I didn’t set out to prove anything about the future of the web.
-I was just trying to ship something useful with tools I made and understood.
+Around the same time I began reflecting on this, I discovered that other developers had quietly been doing the same thing. [In 2020, Bryan Braun wrote about running a production web app built entirely with native ES modules](https://www.bryanbraun.com/2020/10/23/es-modules-in-production-my-experience-so-far/) — no bundler, no transpilation, and no build step. His app wasn’t trivial either; it was made up of dozens of JavaScript modules and served real users. What stood out wasn’t just that it worked, but that development and deployment became dramatically simpler: save, refresh, and ship the same files to production. Performance held up well over HTTP/2, and compression reduced the need for aggressive minification. His conclusion wasn’t that bundlers are useless, but that the long-held assumption that bundling is mandatory had quietly become outdated for many kinds of applications. That experience mirrors my own realization: the platform had already grown capable enough that a large part of our traditional toolchain had become optional, not foundational.
 
-But looking back, that constraint forced me closer to the platform itself — and farther from the layers we’ve added on top of it.
+I didn’t set out to prove anything about the future of the web. I was just trying to ship something useful with tools I made and understood. But looking back, that constraint pulled me closer to the platform itself — and farther away from the layers we’ve added on top of it.
 
-And maybe that’s where the web is quietly heading again:
+Even [David Heinemeier Hansson](https://dhh.dk/) talked about Rails returning to a no-build approach in Rails World Opening Keynote [2023](https://www.youtube.com/watch?v=iqXjGiQ_D-A) ([2024](https://www.youtube.com/watch?v=-cEn_83zRFw&t=647s),[2025](https://www.youtube.com/watch?v=gcwzWzC7gUA)), being able to view source again, and about how complexity is often just a bridge on the way to simplicity, it felt less like a radical idea and more like a recognition of something already happening.
+
+The web didn’t get simpler because we removed features. It got simpler because the platform matured enough to carry more weight on its own.
+
+Faster builds are nice but sometimes the real breakthrough is realizing you don’t need a build at all. We don’t always need more layers, more tooling, or longer pipelines to ship software. Sometimes progress means reclaiming what the platform can already do — and trusting it again.
 
 Not toward more abstraction — but toward a platform that’s finally powerful enough to stand on its own.
 
-The modern web is becoming **mature enough to be simple**.
+The modern web is becoming **mature enough to be simple.**
