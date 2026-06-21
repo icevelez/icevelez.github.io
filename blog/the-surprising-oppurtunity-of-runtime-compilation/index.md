@@ -211,46 +211,6 @@ No bundling process.
 
 ---
 
-## User-Generated Interfaces
-
-Because components remain deployable resources, applications can support scenarios that are difficult in build-centric systems.
-
-For example:
-
-```text
-User Creates Component
-        ↓
-Upload Component
-        ↓
-Application Executes Component
-```
-
-The application can consume new UI definitions without requiring a deployment pipeline.
-
-Whether this is desirable depends on the application, but the capability exists because components remain available at runtime.
-
----
-
-## Server-Generated Components
-
-A server can generate components dynamically.
-
-```text
-Request
-    ↓
-Generate Component
-    ↓
-Return Component
-    ↓
-Execute Component
-```
-
-Instead of generating HTML, the server can generate reusable interactive components.
-
-The browser receives a component rather than the final rendered output.
-
----
-
 ## Component Marketplaces
 
 Runtime resources also enable a different way of thinking about distribution.
@@ -258,7 +218,7 @@ Runtime resources also enable a different way of thinking about distribution.
 Imagine:
 
 ```text
-Download Component
+Download Component from a Component Library 
         ↓
 Load Component
         ↓
@@ -268,6 +228,164 @@ Use Component
 without rebuilding the application.
 
 Because components remain deployable units, applications can consume functionality in the same way they consume other web resources.
+
+---
+
+## Security Considerations
+
+The ability to distribute and execute components at runtime introduces an important question:
+
+> What happens when components come from untrusted sources?
+
+For example:
+
+```text
+User Uploads Component
+        ↓
+Application Loads Component
+        ↓
+Component Executes
+```
+
+At first glance, this appears powerful—and it is—but it also introduces the same security concerns as executing any user-provided JavaScript.
+
+A Core component is ultimately code.
+
+That means a component can potentially:
+
+* Access browser APIs
+* Perform network requests
+* Read application state exposed to it
+* Interact with the DOM
+* Execute arbitrary JavaScript
+
+For this reason, applications should treat untrusted components the same way they would treat untrusted scripts.
+
+---
+
+### Runtime Components Do Not Remove Security Boundaries
+
+Runtime compilation does not bypass browser security.
+
+Core components execute within the same browser security model as any other JavaScript module.
+
+They are still constrained by:
+
+* Same-Origin Policy
+* Content Security Policy (CSP)
+* Browser sandboxing
+* Permission-based browser APIs
+
+However, these protections do not automatically make untrusted code safe.
+
+A malicious component can still perform any action that the hosting application itself is permitted to perform.
+
+---
+
+### Trust Models
+
+Whether runtime-distributed components are appropriate depends on the trust model of the application.
+
+### Trusted Components
+
+Many applications load components only from trusted sources:
+
+```text
+Application
+        ↓
+Developer Components
+        ↓
+Organization Components
+```
+
+In this model, runtime distribution introduces little additional risk beyond loading application code itself.
+
+---
+
+### Semi-Trusted Components
+
+Some applications may allow third-party extensions:
+
+```text
+Application
+        ↓
+Plugin Marketplace
+        ↓
+Reviewed Components
+```
+
+In this scenario, components can be:
+
+* Reviewed
+* Signed
+* Validated
+* Permission-restricted
+
+before distribution.
+
+---
+
+### Untrusted Components
+
+Fully user-generated components represent the highest-risk scenario:
+
+```text
+User
+        ↓
+Upload Component
+        ↓
+Execute Component
+```
+
+In this model, additional isolation mechanisms may be required.
+
+Examples include:
+
+* Sandboxed iframes
+* Web Workers
+* Capability-based APIs
+* Restricted execution environments
+* Permission systems
+
+These protections are outside the scope of Core itself and become application-level architectural decisions.
+
+---
+
+### Runtime Distribution Is Not The Same As Trust
+
+One common misconception is:
+
+> "If components can be distributed dynamically, they should also be executable safely."
+
+These are separate concerns.
+
+Runtime distribution answers:
+
+> How do components reach the browser?
+
+Security answers:
+
+> What is the component allowed to do once it arrives?
+
+Core focuses on the former.
+
+Applications remain responsible for defining the latter.
+
+---
+
+### Security as an Architectural Decision
+
+The ability to load components dynamically does not imply that applications should allow arbitrary components.
+
+For many applications, the simplest and safest approach is:
+
+```text
+Trusted Components Only
+```
+
+Other applications may choose to build richer extension systems with additional safeguards.
+
+The important distinction is that runtime-distributed components create the possibility of user-generated interfaces, but whether that capability is exposed—and how it is secured—remains entirely under the control of the application developer.
 
 ---
 
