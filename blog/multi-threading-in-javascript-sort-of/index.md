@@ -527,13 +527,14 @@ Promise
 That was useful because it demonstrated that the basic idea of **"wrap a function and execute it in a Web Worker"** is independently useful.
 
 But there is an important architectural difference.
+
 ## useWorker vs Worklet
 
 [`useWorker`](https://github.com/alewin/useWorker) and Worklet share a similar goal: **take a JavaScript function and execute it away from the main thread**.
 
-The difference is primarily in **what owns and manages the Worker**.
+The difference is primarily in **what owns and manages the Worker, and how concurrent work is scheduled**.
 
-`useWorker` is primarily a **React-oriented abstraction around a Web Worker**:
+`useWorker` is primarily a **React-oriented abstraction around an individual Web Worker**:
 
 ```text
 React
@@ -562,30 +563,18 @@ Vanilla ──┘
  Worker Pool
 ```
 
-### One wrapped function, one Worker
+### One `useWorker` instance, one Worker
 
-With `useWorker`, the wrapped function is associated with a Worker.
+With `useWorker`, a wrapped function is associated with a Worker instance.
 
 For example:
 
 ```js
 const [parse_csv] = useWorker(parse_csv_func);
-const [fibonnaci] = useWorker(fibonnaci_func);
+const [fibonacci] = useWorker(fibonacci_func);
 ```
 
-If we submit several calls:
-
-```js
-await Promise.all([
-    parse_csv(file1),
-    parse_csv(file2),
-    parse_csv(file3),
-    parse_csv(file4),
-    fibonnaci(32),
-]);
-```
-
-those calls are sent to the **same Worker associated with that wrapped function**:
+These are two independent `useWorker` instances, and therefore two independent Workers:
 
 ```text
 parse_csv()
@@ -594,51 +583,155 @@ parse_csv()
 ┌─────────────────────┐
 │      Worker 1       │
 │                     │
-│   parse(file1)      │
-│   parse(file2)      │
-│   parse(file3)      │
-│   parse(file4)      │
+│     parse_csv()     │
 └─────────────────────┘
-fibonnaci()
+
+
+fibonacci()
      │
      ▼
 ┌─────────────────────┐
 │      Worker 2       │
 │                     │
-│   fibonnaci(32)     │
+│    fibonacci()      │
 └─────────────────────┘
 ```
 
-The calls can therefore be asynchronous from the perspective of the main thread, but the JavaScript execution inside that Worker is still sequential:
+There is an important detail, however: [**a single `useWorker` instance only allows one invocation to be running at a time.**](https://github.com/alewin/useWorker/blob/master/packages/useWorker/src/useWorker.ts#L162) It does not maintain a task queue for concurrent calls.
+
+For example:
+
+```js
+const [parse_csv] = useWorker(parse_csv_func);
+
+await Promise.all([
+    parse_csv(file1),
+    parse_csv(file2),
+    parse_csv(file3),
+    parse_csv(file4),
+]);
+```
+
+The first call starts the Worker:
+
+```text
+parse_csv(file1)
+       │
+       ▼
+   Worker 1
+       │
+    running
+```
+
+While that Worker is running, another invocation of the same `useWorker` instance is rejected rather than queued.
+
+Conceptually:
 
 ```text
 Worker 1
 ────────────────────────────────────────────
-████████ file1 ████████
-                        ████████ file2 █████
-                                             ...
+████████ file1 ████████████
+        │
+        ├── parse(file2) → rejected
+        ├── parse(file3) → rejected
+        └── parse(file4) → rejected
 ```
 
-The browser/OS can schedule that Worker on an available CPU thread, but the application isn't creating a pool of Workers for those four calls.
+To execute multiple invocations of the same function concurrently with `useWorker`, you need multiple `useWorker` instances:
 
-This is an important distinction:
+```js
+const [parse_csv_1] = useWorker(parse_csv_func);
+const [parse_csv_2] = useWorker(parse_csv_func);
+const [parse_csv_3] = useWorker(parse_csv_func);
+const [parse_csv_4] = useWorker(parse_csv_func);
+```
 
-> **`useWorker` abstracts the Worker; Worklet abstracts the execution of tasks across Workers.**
+which gives you:
+
+```text
+parse_csv_1 ──► Worker 1
+parse_csv_2 ──► Worker 2
+parse_csv_3 ──► Worker 3
+parse_csv_4 ──► Worker 4
+```
+
+This means concurrency is exposed at the **Worker instance level**.
+
+### Worker lifetime
+
+`useWorker` also has an `autoTerminate` option.
+
+By default:
+
+```js
+autoTerminate: true
+```
+
+When the task finishes, the Worker is terminated:
+
+```text
+call
+ │
+ ▼
+create Worker
+ │
+ ▼
+execute function
+ │
+ ▼
+resolve Promise
+ │
+ ▼
+terminate Worker
+```
+
+The next invocation creates another Worker.
+
+With:
+
+```js
+const [parse_csv] = useWorker(parse_csv_func, {
+    autoTerminate: false,
+});
+```
+
+the Worker remains alive and can be reused:
+
+```text
+call #1
+   │
+   ▼
+Worker 1
+   │
+   ▼
+result
+   │
+   │  Worker remains alive
+   ▼
+call #2
+   │
+   ▼
+Worker 1
+```
+
+However, this still does not turn the Worker into a concurrent task queue. Only one invocation can be active at a time for that `useWorker` instance.
 
 ---
 
 ## Worklet: Functions Become Tasks
 
-With Worklet:
+Worklet takes a different approach.
+
+Instead of associating a Worker with a function, Worklet treats each invocation as a **task**.
 
 ```js
 import { wrap } from "worklet";
 
 const parse_csv = wrap(parse_csv_func);
-const fibonnaci = wrap(fibonnaci_func);
+const fibonacci = wrap(fibonacci_func);
 ```
 
-calling the function creates a **task**:
+Calling the wrapped function creates work that is submitted to the scheduler:
 
 ```js
 await Promise.all([
@@ -646,22 +739,22 @@ await Promise.all([
     parse_csv(file2),
     parse_csv(file3),
     parse_csv(file4),
-    fibonnaci(32),
+    fibonacci(32),
 ]);
 ```
 
-Those tasks are submitted to Worklet's scheduler:
+The scheduler can distribute those tasks across the available Workers:
 
 ```text
-                    Worklet
-                       │
-                    Scheduler
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-      Worker 1       Worker 2       Worker 3
-        │              │              │
-      file1          file2          file3
+                         Worklet
+                            │
+                         Scheduler
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+       Worker 1          Worker 2          Worker 3
+          │                 │                 │
+     parse_csv(file1)  parse_csv(file2)  parse_csv(file3)
 ```
 
 If the pool is limited to four Workers:
@@ -675,7 +768,7 @@ Task 5 ──► Queue
 Task 6 ──► Queue
 ```
 
-As soon as a Worker becomes available:
+When a Worker becomes available:
 
 ```text
 Task 2
@@ -689,42 +782,38 @@ Task 2
        Task 5
 ```
 
-The scheduler therefore separates task concurrency from Worker ownership.
+The Worker is therefore an **execution resource**, rather than something permanently associated with a particular function.
 
-The application can create many tasks:
+You can have many different functions:
 
 ```js
-parse_csv(file1);
-parse_csv(file2);
-parse_csv(file3);
-// ...
-parse_csv(file25);
+const parse_csv = wrap(parse_csv_func);
+const resize_image = wrap(resize_image_func);
+const compress = wrap(compress_func);
+const calculate = wrap(calculate_func);
 ```
 
-without creating 25 Workers.
-
-Instead:
+while still maintaining a fixed Worker limit:
 
 ```text
-                  25 Tasks
-                     │
-                     ▼
-                 Scheduler
-                     │
-       ┌─────────────┼─────────────┐
-       ▼             ▼             ▼
-      W1            W2            W3
-       │             │             │
-      CSV           CSV           CSV
-       │             │             │
-       └─────────────┬─────────────┘
-                     │
-                  Workers
-                 become free
-                     │
-                     ▼
-                next queued task
+                    Scheduler
+                        │
+             ┌──────────┼──────────┐
+             ▼          ▼          ▼
+            W1         W2         W3
+             │          │          │
+          parse       resize     calculate
+             │          │          │
+             └──────────┴──────────┘
+                        │
+                  Workers become
+                     available
+                        │
+                        ▼
+                  next queued task
 ```
+
+The scheduler determines **which Worker executes which task**.
 
 ---
 
@@ -741,7 +830,7 @@ Wrapped Function
     Worker
        │
        ▼
-    Executes
+   One task at a time
 ```
 
 versus:
@@ -765,7 +854,25 @@ Wrapped Function
   W1  W2  W3
 ```
 
-This means Worklet can make the number of Workers an implementation detail rather than something coupled to the number of functions being wrapped.
+This means Worklet separates **what is being executed** from **where it is executed**.
+
+With `useWorker`, the relationship is roughly:
+
+```text
+Function instance ──► Worker instance
+```
+
+With Worklet:
+
+```text
+Function invocation ──► Task ──► Scheduler ──► Worker
+```
+
+That distinction is central to Worklet.
+
+> **`useWorker` abstracts the Worker; Worklet abstracts the execution of tasks across Workers.**
+
+The goal of Worklet is therefore not simply to make `new Worker()` easier to use. It is to move **task scheduling, concurrency, Worker reuse, Worker limits, and Worker lifecycle** out of application code and into the execution abstraction.
 
 ---
 
