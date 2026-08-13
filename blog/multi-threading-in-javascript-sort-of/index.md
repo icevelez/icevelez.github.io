@@ -876,399 +876,499 @@ The goal of Worklet is therefore not simply to make `new Worker()` easier to use
 
 ---
 
-# The Price of Parallelism
+# Putting Worklet to the Test
 
-This all sounds fantastic until you move a large amount of data.
+At this point, it is easy to talk about worker pools in terms of architecture:
 
-And this is where Web Workers reveal their biggest trade-off.
+> "Tasks are distributed across multiple Workers."
 
-Suppose we're parsing CSV files.
+But what does that actually mean in practice?
 
-The main thread has:
+To test this, I built a small CSV parsing benchmark using the same dataset in both configurations:
 
-```js
-const file = input.files[0];
-```
+* **7 CSV files**
+* The files range from approximately **5 MB to 86 MB**
+* The largest file contains **500,000 rows**
+* All files are parsed into JavaScript arrays
+* The same parser and dataset are used in both tests
+* The only significant difference is **where the parsing work executes**
 
-We send it to the worker:
+The files used for the benchmark were:
 
-```js
-worker.postMessage(file);
-```
+| File                   |    Size |
+| ---------------------- | ------: |
+| `customers-500000.csv` | 86.5 MB |
+| `customers-100000.csv` | 17.3 MB |
+| `sample-10mb.csv`      | 10.5 MB |
+| `sample-20mb.csv`      | 21.0 MB |
+| `sample-5mb.csv`       |  5.2 MB |
+| `sample-15mb.csv`      | 15.7 MB |
+| `sample-30mb.csv`      | 31.5 MB |
 
-The browser handles the communication between the two execution contexts.
+The total input is roughly **186 MB of CSV data**.
 
-For values that aren't transferable, JavaScript uses the **structured clone algorithm**.
-
-Conceptually:
-
-```text
-Main Thread                         Worker
-
-Object A                            Object B
-┌──────────────┐                    ┌──────────────┐
-│ CSV records  │ ─── clone ───────► │ CSV records  │
-│ arrays       │                    │ arrays       │
-│ strings      │                    │ strings      │
-└──────────────┘                    └──────────────┘
-```
-
-You don't get:
-
-```text
-Main ──► same object reference ──► Worker
-```
-
-Instead, you get a corresponding representation in another JavaScript heap.
+The important part is that this is not a tiny synthetic benchmark. The parser has to process hundreds of megabytes of text and construct hundreds of thousands of JavaScript values.
 
 ---
 
-# The Memory Cost
+## Main Thread vs Worklet
 
-This becomes particularly important with large datasets.
-
-Suppose a worker parses 500 MB worth of CSV data and produces a large JavaScript object graph.
-
-You may temporarily have:
-
-```text
-Main Thread
-┌──────────────────────────────┐
-│ input data                   │
-│ application state            │
-│ cloned result                │
-└──────────────────────────────┘
-
-Worker
-┌──────────────────────────────┐
-│ input data                   │
-│ parser state                 │
-│ parsed result                │
-└──────────────────────────────┘
-```
-
-And while garbage collection and temporary allocations are occurring, the peak memory usage can become considerably larger than the final dataset.
-
-This is one explanation for why a Worker-based CSV processing workload can show surprisingly high memory usage.
-
-If you have several Workers:
-
-```text
-Worker 1 → Heap
-Worker 2 → Heap
-Worker 3 → Heap
-Worker 4 → Heap
-...
-```
-
-each worker has its own JavaScript execution environment and associated memory.
-
-Parallelism isn't free.
-
----
-
-# Transferables Help
-
-JavaScript has another mechanism for moving certain types of data between Workers without copying the underlying memory: **Transferable Objects**.
-
-For example:
+The first test performs all parsing directly on the main thread:
 
 ```js
-const buffer = new ArrayBuffer(1024);
-
-worker.postMessage(
-    buffer,
-    [buffer]
+const results = await Promise.all(
+    files.map(file => parse_csv(file))
 );
 ```
 
-The ownership of the buffer moves:
+The second test uses Worklet:
 
-```text
-Before
+```js
+const worker_parse_csv = wrap(parse_csv);
 
-Main
- │
- └── ArrayBuffer
-
-
-After
-
-Main                     Worker
- │                          │
- └── detached          ArrayBuffer
+const results = await Promise.all(
+    files.map(file => worker_parse_csv(file))
+);
 ```
 
-This can be substantially more efficient for large binary data.
+The application itself doesn't need to know that the second version is using multiple Workers.
 
-But there's a catch:
+The difference is what happens underneath.
 
-> **The original owner loses access to the transferred resource.**
+### Main Thread
 
-And not every JavaScript value is transferable.
+```text
+                    Main Thread
+──────────────────────────────────────────────
+
+CSV #1 ███████████████████
+                         CSV #2 ███████████████
+                                              CSV #3 ███████
+                                                       ...
+
+                         UI
+                         │
+                         ├── rendering
+                         ├── events
+                         ├── microtasks
+                         └── parsing
+                              ↑
+                         competing for
+                         the same thread
+```
+
+Every parsing operation is competing with the browser's main-thread work.
+
+The JavaScript engine can only execute one piece of JavaScript at a time on that thread.
+
+So while the parser is doing something expensive:
+
+```js
+for (...) {
+    // parse CSV
+}
+```
+
+the browser cannot simultaneously execute another piece of JavaScript on that same thread.
 
 ---
 
-# SharedArrayBuffer Goes Even Further
+## With Worklet
 
-There is also `SharedArrayBuffer`.
-
-Instead of transferring ownership:
+With Worklet, the same calls become tasks:
 
 ```text
-Main ───────► Worker
+                         Worklet
+                            │
+                         Scheduler
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+      Worker #1         Worker #2         Worker #3
+          │                 │                 │
+       CSV #1            CSV #2            CSV #3
+          │                 │                 │
+          ▼                 ▼                 ▼
+       result            result            result
 ```
 
-both execution contexts can access the same underlying bytes:
+Instead of:
 
 ```text
-             SharedArrayBuffer
-                    │
-             ┌──────┴──────┐
-             ▼             ▼
-           Main          Worker
+Main Thread
+──────────────────────────────────────────────
+██████████████████████████████████████████████
+CSV #1 → CSV #2 → CSV #3 → CSV #4 → ...
 ```
 
-With `Atomics`, the two execution contexts can coordinate access.
+the workload can become:
 
-This starts to look much more like traditional shared-memory multithreading.
+```text
+Worker #1  █████████████ CSV #1 █████████████
+Worker #2  ███████ CSV #2 █████████
+Worker #3  ███████████████ CSV #3 ███████████
+Worker #4  █████ CSV #4 ███████
+```
 
-But there's an important limitation:
+These are independent JavaScript execution contexts.
 
-**SharedArrayBuffer contains bytes, not arbitrary JavaScript objects.**
+The browser can schedule those Workers across available CPU resources while the main thread remains available for the application.
 
-You can't simply place a `Map`, arbitrary object graph, or function into shared memory.
+This is where the distinction between **concurrency** and **parallelism** becomes important.
 
-You have to design a binary representation.
+`Promise.all()` by itself does not make JavaScript CPU work parallel.
+
+It gives us concurrency at the asynchronous programming level.
+
+Worklet adds the missing execution resources:
+
+> **The scheduler turns concurrent tasks into work that can actually execute in parallel across multiple Workers.**
 
 ---
 
-# The Fundamental Trade-Off
+# The Results
 
-At this point, the architecture can be summarized as:
+For this particular benchmark, the results were:
+
+| Metric                             | Main Thread |                      Worklet |
+| ---------------------------------- | ----------: | ---------------------------: |
+| Parsing time                       |  **4.42 s** |                   **3.10 s** |
+| Total JS heap observed             | **~1.3 GB** |                  **~1.8 GB** |
+| Main-thread CPU pressure           |        High |                   Much lower |
+| Parallel execution                 |          No |                          Yes |
+| UI thread available during parsing |     Limited | Significantly more available |
+
+The Worklet version completed the workload in approximately:
+
+**3.10 seconds**
+
+compared with:
+
+**4.42 seconds**
+
+on the main thread.
+
+That's roughly a **30% reduction in elapsed parsing time** in this particular test.
+
+> [!NOTE]
+> The System hardware and software used for this test are
+> OS: Linux Mint 22.2 Cinnamon
+> Browser: Chromium Version 150.0.7871.186 (Official Build) for Linux Mint (64-bit)
+> CPU: Ryzen 7 8745HS 
+> Memory: 24GB LPDDR5X
 
 ```text
-             Web Workers
-                  │
-       ┌──────────┴──────────┐
-       │                     │
-       ▼                     ▼
-   Parallelism            Isolation
-       │                     │
-       │                     │
-       └──────────┬──────────┘
-                  ▼
-          Communication cost
+Main Thread
+
+4.42 seconds
+████████████████████████████████████████████
+
+
+Worklet
+
+3.10 seconds
+████████████████████████████
 ```
 
-Workers give us something extremely valuable:
+This is not a claim that every workload will become 30% faster.
 
-**parallel computation.**
+The actual improvement depends on:
 
-But they also give us:
+* CPU core count
+* Worker startup overhead
+* serialization/deserialization
+* task size
+* memory bandwidth
+* garbage collection
+* how much of the workload is actually CPU-bound
+* how much work can execute independently
 
-**isolated memory.**
-
-And isolated memory means:
-
-**communication overhead.**
-
-So the optimization question isn't simply:
-
-> "Can I move this computation to a Worker?"
-
-It becomes:
-
-> **"Is the computation expensive enough to justify moving the data across the Worker boundary?"**
+But the important thing is that **the workload has become parallelizable**.
 
 ---
 
-# CSV Parsing Is a Good Example
+# The More Interesting Result: UI Responsiveness
 
-Imagine 25 CSV files selected through:
+The execution time is only half of the story.
 
-```html
-<input type="file" multiple>
-```
+For a browser application, this can actually be more important:
 
-A main-thread implementation might do:
+> **What happens to the UI while the computation is running?**
+
+When parsing occurs on the main thread, the parser competes directly with:
 
 ```text
 Main Thread
 │
-├── File 1 → parse
-├── File 2 → parse
-├── File 3 → parse
-├── ...
-└── File 25 → parse
+├── JavaScript
+├── Event handlers
+├── Microtasks
+├── DOM work
+├── Rendering
+├── Layout
+├── Painting
+└── CSV parsing
 ```
 
-The main thread performs the CPU-intensive parsing.
+A sufficiently large CSV can therefore produce long periods where the browser has little opportunity to respond to user interaction.
 
-With Worklet:
+In the benchmark, the Chrome Performance trace shows substantial main-thread activity during the main-thread parsing test.
+
+With Worklet, that CPU-heavy parsing work moves away from the main thread:
 
 ```text
+Main Thread
+────────────────────────────────────────────
+UI     Events     Rendering     UI     Events
+████     ██          ███         ███      ██
+
+
+Worker #1
+────────────────────────────────────────────
+████████████████████████████████████████████
+             CSV parsing
+
+
+Worker #2
+────────────────────────────────────────────
+████████████████████████████████████████████
+             CSV parsing
+
+
+Worker #3
+────────────────────────────────────────────
+████████████████████████████████████████████
+             CSV parsing
+```
+
+The main thread still has work to do.
+
+Messages must still be received, results must still be processed, and the browser still has to perform rendering.
+
+But the **expensive parsing loop itself is no longer occupying the UI thread**.
+
+That distinction is important.
+
+> Worklet isn't merely about making a computation finish sooner.
+> It is about moving computation away from the thread responsible for keeping the application responsive.
+
+---
+
+# The Cost: Memory
+
+There is, however, no free lunch.
+
+The Worklet benchmark used approximately:
+
+**~1.8 GB of JavaScript heap**
+
+while the main-thread version used approximately:
+
+**~1.3 GB.**
+
+At first glance, this might look like a disadvantage of Worklet:
+
+```text
+Main Thread       ~1.3 GB
+Worklet           ~1.8 GB
+                  ↑
+               +500 MB
+```
+
+And it is a real cost.
+
+But the reason is important.
+
+Web Workers do **not** share the normal JavaScript heap with the main thread.
+
+Conceptually:
+
+```text
+             Main Thread
+             ┌──────────┐
+             │ JS Heap  │
+             │ ~1.3 GB  │
+             └──────────┘
+
+                  ↕
+             structured
+               cloning /
+             transferring
+
+      ┌──────────┬──────────┬──────────┐
+      ▼          ▼          ▼          ▼
+ Worker #1   Worker #2   Worker #3   Worker #4
+ ┌───────┐   ┌───────┐   ┌───────┐   ┌───────┐
+ │ Heap  │   │ Heap  │   │ Heap  │   │ Heap  │
+ └───────┘   └───────┘   └───────┘   └───────┘
+```
+
+Each Worker has its own JavaScript execution context and heap.
+
+When a large computation produces:
+
+```js
+[
+    [/* 500,000 rows */],
+    [/* 100,000 rows */],
+    ...
+]
+```
+
+those objects aren't magically shared between the Worker and the main thread.
+
+They have to cross the Worker boundary.
+
+For ordinary JavaScript objects, this generally means the **structured clone algorithm** creates another representation in the receiving context.
+
+That can result in significant memory consumption for large datasets.
+
+---
+
+# Parallelism Has a Price
+
+This gives us one of the fundamental trade-offs of Worklet:
+
+```text
+                 Worklet
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+       Benefits             Costs
+          │                   │
+          ▼                   ▼
+    Parallelism           More memory
+    Concurrency           Serialization
+    UI responsiveness     Deserialization
+    CPU utilization       Worker startup
+    Task isolation        Scheduling overhead
+```
+
+The 1.8 GB result is therefore not something to hide.
+
+It is one of the most important observations from the experiment.
+
+> **Worklet trades memory and communication overhead for parallel execution and a more responsive main thread.**
+
+And that trade-off is highly workload-dependent.
+
+For a tiny function:
+
+```js
+const add = (a, b) => a + b;
+```
+
+sending the work to another Worker would be absurdly expensive relative to the computation itself.
+
+You would be paying for:
+
+```text
+postMessage
+    ↓
+serialization
+    ↓
+thread scheduling
+    ↓
+function execution
+    ↓
+serialization
+    ↓
+postMessage
+```
+
+to perform:
+
+```js
+a + b
+```
+
+But for something like:
+
+```text
+86 MB CSV
+     ↓
+500,000 rows
+     ↓
+parsing
+     ↓
+validation
+     ↓
+transformation
+     ↓
+large result
+```
+
+the computation can be large enough to justify the overhead.
+
+This is the type of workload Worklet is designed to target.
+
+---
+
+# The Real Benefit of Worklet
+
+The benchmark therefore demonstrates something slightly different from simply:
+
+> "Workers are faster."
+
+That isn't universally true.
+
+The more interesting statement is:
+
+> **Worklet gives ordinary JavaScript functions access to a pool of independent execution contexts, allowing expensive CPU-bound tasks to execute concurrently and, where the hardware permits, in parallel without occupying the main thread.**
+
+The architecture changes the shape of the problem:
+
+```text
+Before
+
+             Main Thread
+                  │
+                  ▼
+        ┌─────────────────┐
+        │    CSV Parser   │
+        └─────────────────┘
+                  │
+                  ▼
+             UI blocked
+```
+
+becomes:
+
+```text
+After
+
                   Worklet
                      │
                   Scheduler
                      │
        ┌─────────────┼─────────────┐
        ▼             ▼             ▼
-      W1            W2            W3
+   Worker #1     Worker #2     Worker #3
        │             │             │
-    CSV 1          CSV 2          CSV 3
+    CSV #1         CSV #2         CSV #3
        │             │             │
-       ▼             ▼             ▼
-    parsing        parsing        parsing
+       └─────────────┼─────────────┘
+                     ▼
+                  Results
+                     │
+                     ▼
+                Main Thread
+                     │
+                     ▼
+                    UI
 ```
 
-The CPU-heavy work can happen concurrently.
+And this is ultimately what Worklet is trying to provide:
 
-But eventually:
+> **Not faster JavaScript by itself, but another execution model for JavaScript.**
 
-```text
-Worker
-   │
-   │ parsed result
-   ▼
-Main Thread
-```
+The main thread remains the place where the application lives.
 
-and that result still has to cross the boundary.
-
-If the result is a massive JavaScript object graph, the communication and memory costs can become significant.
-
-This is why a high-performance Worker architecture often benefits from:
-
-* streaming input
-* compact representations
-* typed arrays
-* Transferable objects
-* avoiding unnecessary intermediate objects
-* processing data incrementally
-* terminating workers when their memory is no longer useful
-
-The goal isn't simply:
-
-> **"Put everything in Workers."**
-
-It's:
-
-> **"Put the right computation and data representation in Workers."**
+Worklet provides a way to move expensive, independent computation somewhere else—and lets a scheduler decide **which Worker should perform it, when it should run, and when that Worker should go away.**
 
 ---
 
-# Concurrency vs Parallelism
-
-There's another distinction worth making.
-
-These two concepts are related but different.
-
-### Concurrency
-
-Multiple tasks are in progress:
-
-```text
-Task A ────────────────┐
-Task B ─────────┐     │
-Task C ───────┐ │     │
-              ▼ ▼     ▼
-              scheduler
-```
-
-### Parallelism
-
-Multiple tasks are actually executing simultaneously on different processors:
-
-```text
-CPU 1 ── Task A ──────────
-CPU 2 ── Task B ──────────
-CPU 3 ── Task C ──────────
-```
-
-A single Worker can give you asynchronous/concurrent behavior:
-
-```text
-Task A
-Task B
-Task C
-```
-
-but its JavaScript execution is still sequential.
-
-Multiple Workers allow actual CPU parallelism:
-
-```text
-Worker 1 → CPU
-Worker 2 → CPU
-Worker 3 → CPU
-```
-
-This is why the Worker Pool matters.
-
----
-
-# What Worklet Ultimately Became
-
-What started as:
-
-> "Can I run an expensive function away from the main thread?"
-
-eventually became:
-
-```text
-                    Worklet
-                       │
-          ┌────────────┼────────────┐
-          │            │            │
-          ▼            ▼            ▼
-       Wrapping     Scheduling    Lifecycle
-          │            │            │
-          │            ▼            │
-          │       Worker Pool       │
-          │                         │
-          └───────────┬─────────────┘
-                      ▼
-                 Web Workers
-```
-
-The developer experience remains simple:
-
-```js
-import { wrap } from "worklet";
-
-const expensive = wrap(expensiveFunction);
-
-const result = await expensive(data);
-```
-
-But underneath, there is a runtime dealing with:
-
-```text
-Function registration
-        ↓
-Task creation
-        ↓
-Task queue
-        ↓
-Worker selection
-        ↓
-Message passing
-        ↓
-Promise resolution
-        ↓
-Timeout handling
-        ↓
-Worker replacement
-        ↓
-Idle worker termination
-```
-
-And that's what makes the abstraction interesting.
-
----
-
-# Is JavaScript Still Single-Threaded?
+# So Is JavaScript Still Single-Threaded?
 
 A JavaScript execution context executes code sequentially but the browser can host multiple JavaScript execution contexts like
 
